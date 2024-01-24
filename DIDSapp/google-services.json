@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "340993183914",
+    "project_id": "dids-app",
+    "storage_bucket": "dids-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340993183914:android:b6f53511c73ed9c51900d3",
+        "android_client_info": {
+          "package_name": "io.invertase.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7nFHP_eO7SLW85xmG2oCJU4Lc-9F6P80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -10,32 +10,7 @@ const ForgotPassword = () => {
 
   return (
     <View style={styles.forgotpassword}>
-      <View style={styles.statusBar}>
-        <View style={[styles.time, styles.timePosition]}>
-          <Text style={[styles.time1, styles.time1Typo]}>9:41</Text>
-        </View>
-        <View style={[styles.levels, styles.timePosition]}>
-          <View style={[styles.battery, styles.borderPosition]}>
-            <View style={[styles.border, styles.borderPosition]} />
-            <Image
-              style={[styles.capIcon, styles.iconPosition]}
-              contentFit="cover"
-              source={require("../assets/cap.png")}
-            />
-            <View style={[styles.capacity, styles.borderPosition]} />
-          </View>
-          <Image
-            style={[styles.wifiIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/wifi.png")}
-          />
-          <Image
-            style={[styles.cellularConnectionIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/cellular-connection.png")}
-          />
-        </View>
-      </View>
+      
       <View style={styles.backArrowParent}>
         <Pressable style={styles.backArrow} onPress={() => navigation.goBack()}>
           <Image
@@ -100,7 +75,6 @@ const styles = StyleSheet.create({
   passwordClr: {
     display: "flex",
     color: Color.colorBlack,
-    lineHeight: 22,
     alignItems: "center",
   },
   time1: {

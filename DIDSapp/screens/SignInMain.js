@@ -9,6 +9,7 @@ import {
   Pressable,
 } from "react-native";
 import { Image } from "expo-image";
+//import { TextInput as RNPTextInput } from "react-native-paper";
 import StatePlaceholder from "../components/StatePlaceholder";
 import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
@@ -25,21 +26,8 @@ const SignInMain = () => {
     >
       <View style={styles.frameParent}>
         <View style={styles.searchFieldWrapper}>
-          <StatePlaceholder
-            searchText="Search for meeting location"
-            showText
-            showDictation
-            statePlaceholderPosition="absolute"
-            statePlaceholderTop={14}
-            statePlaceholderLeft={17}
-            statePlaceholderBackgroundColor="rgba(118, 118, 128, 0.12)"
-            searchGlyphFontFamily="PTSans-Regular"
-            placeholderLabelFontFamily="PTSans-Regular"
-            placeholderLabelColor="unset"
-            placeholderLabelTextAlign="unset"
-            placeholderLabelOverflow="unset"
-            placeholderLabelHeight="unset"
-            dictationFontFamily="PTSans-Regular"
+          <TextInput
+            style={styles.searchInput}
           />
         </View>
         <StatusBar barStyle="default" />
@@ -152,6 +140,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
+  searchInput: {
+    flex: 1,
+    height: "100%",
+    color: Color.colorBlack,
+    fontSize: FontSize.size_l,
+    fontFamily: FontFamily.pTSansCaption,
+  },
   savedgroupsLayout: {
     width: 346,
     marginTop: 27,
@@ -222,17 +217,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   searchFieldWrapper: {
-    top: 35,
     height: 70,
     backgroundColor: Color.colorGoldenrod_100,
-    left: 0,
-    position: "absolute",
-    width: 390,
+    width: '100%',
   },
   frameParent: {
     height: 105,
     zIndex: 0,
-    width: 390,
+    width: '100%',
   },
   suggestedGroup: {
     textAlign: "left",

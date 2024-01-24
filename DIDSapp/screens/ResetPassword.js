@@ -10,32 +10,7 @@ const ResetPassword = () => {
 
   return (
     <View style={styles.resetpassword}>
-      <View style={styles.statusBar}>
-        <View style={[styles.time, styles.timePosition]}>
-          <Text style={[styles.time1, styles.time1Typo]}>9:41</Text>
-        </View>
-        <View style={[styles.levels, styles.timePosition]}>
-          <View style={[styles.battery, styles.batteryPosition]}>
-            <View style={styles.border} />
-            <Image
-              style={[styles.capIcon, styles.iconPosition]}
-              contentFit="cover"
-              source={require("../assets/cap.png")}
-            />
-            <View style={[styles.capacity, styles.batteryPosition]} />
-          </View>
-          <Image
-            style={[styles.wifiIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/wifi.png")}
-          />
-          <Image
-            style={[styles.cellularConnectionIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/cellular-connection.png")}
-          />
-        </View>
-      </View>
+     
       <View style={styles.backArrowParent}>
         <Pressable
           style={styles.backArrow}

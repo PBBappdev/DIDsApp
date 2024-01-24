@@ -6,13 +6,23 @@ import { useNavigation } from "@react-navigation/native";
 import { Color, FontSize, FontFamily, Border } from "../GlobalStyles";
 
 const RoleSelect = () => {
-  const [checkedCheckboxAndLabel, setCheckedCheckboxAndLabel] = useState(true);
-  const [defaultCheckboxAndLabelchecked, setDefaultCheckboxAndLabelchecked] =
-    useState(false);
-  const [defaultCheckboxAndLabel1checked, setDefaultCheckboxAndLabel1checked] =
-    useState(false);
+  const [selectedRole, setSelectedRole] = useState(""); // Updated state
+
   const navigation = useNavigation();
 
+  const handleCheckboxPress = (role) => {
+    if (selectedRole === role) {
+      // If the selected role is the same, unselect it
+      setSelectedRole("");
+    } else {
+      // Otherwise, select the new role
+      setSelectedRole(role);
+    }
+  };
+
+
+  const isContinueEnabled = selectedRole !== ""; // Check if a role is selected
+  
   return (
     <ScrollView
       style={styles.roleselect}
@@ -20,33 +30,6 @@ const RoleSelect = () => {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.roleSelectScrollViewContent}
     >
-      <View style={styles.statusBar}>
-        <View style={[styles.time, styles.timePosition]}>
-          <Text style={[styles.time1, styles.time1FlexBox]}>9:41</Text>
-        </View>
-        <View style={[styles.levels, styles.timePosition]}>
-          <View style={[styles.battery, styles.borderPosition]}>
-            <View style={[styles.border, styles.borderPosition]} />
-            <Image
-              style={[styles.capIcon, styles.iconPosition]}
-              contentFit="cover"
-              source={require("../assets/cap.png")}
-            />
-            <View style={[styles.capacity, styles.borderPosition]} />
-          </View>
-          <Image
-            style={[styles.wifiIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/wifi.png")}
-          />
-          <Image
-            style={[styles.cellularConnectionIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/cellular-connection.png")}
-          />
-        </View>
-        <Text style={[styles.meetings, styles.time1FlexBox]}>Meetings</Text>
-      </View>
       <View style={styles.backArrowParent}>
         <Pressable
           style={styles.backArrow}
@@ -64,10 +47,8 @@ const RoleSelect = () => {
         <View style={styles.checkboxFlexBox}>
           <View>
             <Checkbox
-              status={checkedCheckboxAndLabel ? "checked" : "unchecked"}
-              onPress={() =>
-                setCheckedCheckboxAndLabel(!checkedCheckboxAndLabel)
-              }
+              status={selectedRole === "Client" ? "checked" : "unchecked"}
+              onPress={() => handleCheckboxPress("Client")}
               color="#fbb042"
             />
           </View>
@@ -78,13 +59,9 @@ const RoleSelect = () => {
         >
           <View>
             <Checkbox
-              status={defaultCheckboxAndLabelchecked ? "checked" : "unchecked"}
-              onPress={() =>
-                setDefaultCheckboxAndLabelchecked(
-                  !defaultCheckboxAndLabelchecked
-                )
-              }
-              color="#fbb042"
+               status={selectedRole === "Volunteer" ? "checked" : "unchecked"}
+               onPress={() => handleCheckboxPress("Volunteer")}
+               color="#fbb042"
             />
           </View>
           <Text style={[styles.label1, styles.labelTypo]}>
@@ -97,13 +74,9 @@ const RoleSelect = () => {
         >
           <View>
             <Checkbox
-              status={defaultCheckboxAndLabel1checked ? "checked" : "unchecked"}
-              onPress={() =>
-                setDefaultCheckboxAndLabel1checked(
-                  !defaultCheckboxAndLabel1checked
-                )
-              }
-              color="#fbb042"
+               status={selectedRole === "Staff" ? "checked" : "unchecked"}
+               onPress={() => handleCheckboxPress("Staff")}
+               color="#fbb042"
             />
           </View>
           <Text style={[styles.label, styles.labelTypo]}>Staff*</Text>
@@ -119,7 +92,15 @@ const RoleSelect = () => {
       </Text>
       <Pressable
         style={styles.continueWrapper}
-        onPress={() => navigation.navigate("InitialNotifications")}
+        onPress={() => {
+          if (isContinueEnabled) {
+            navigation.navigate("InitialNotifications");
+          } else {
+            // Display an alert if Continue is pressed without selecting a role
+            alert("Please select a role before continuing.");
+          }
+        }}
+        
       >
         <Text style={styles.continue}>Continue</Text>
       </Pressable>
@@ -160,7 +141,7 @@ const styles = StyleSheet.create({
     display: "flex",
     width: 334,
     textAlign: "left",
-    lineHeight: 22,
+    lineHeight: 40,
   },
   labelTypo: {
     lineHeight: 33,
@@ -173,86 +154,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
   },
-  time1: {
-    width: "26.31%",
-    top: "33.89%",
-    left: "36.94%",
-    fontSize: FontSize.size_mid,
-    fontFamily: FontFamily.pTSansBold,
-    fontWeight: "700",
-    textAlign: "center",
-    lineHeight: 22,
-  },
-  time: {
-    right: "68.36%",
-    left: "-11.54%",
-  },
-  border: {
-    marginLeft: -13.65,
-    top: "0%",
-    bottom: "0%",
-    borderRadius: Border.br_8xs_3,
-    borderStyle: "solid",
-    borderColor: Color.colorBlack,
-    borderWidth: 1,
-    width: 25,
-    opacity: 0.35,
-    height: "100%",
-  },
-  capIcon: {
-    height: "31.54%",
-    marginLeft: 12.35,
-    top: "36.92%",
-    bottom: "31.54%",
-    width: 1,
-    opacity: 0.4,
-  },
-  capacity: {
-    height: "69.23%",
-    marginLeft: -11.65,
-    top: "15.38%",
-    bottom: "15.38%",
-    borderRadius: Border.br_10xs_5,
-    backgroundColor: Color.colorBlack,
-    width: 21,
-  },
-  battery: {
-    height: "24.07%",
-    marginLeft: 10.8,
-    top: "42.59%",
-    bottom: "33.33%",
-    width: 27,
-  },
-  wifiIcon: {
-    height: "22.78%",
-    marginLeft: -13.5,
-    top: "43.7%",
-    bottom: "33.52%",
-    width: 17,
-  },
-  cellularConnectionIcon: {
-    height: "22.59%",
-    marginLeft: -40.2,
-    top: "43.52%",
-    bottom: "33.89%",
-    width: 19,
-  },
-  levels: {
-    right: "-9.23%",
-    left: "66.05%",
-  },
-  meetings: {
-    top: -524,
-    left: 1455,
-    fontSize: FontSize.size_xs,
-    fontFamily: FontFamily.interRegular,
-    textAlign: "center",
-    lineHeight: 22,
-  },
-  statusBar: {
-    alignSelf: "stretch",
-    height: 32,
-  },
   icon: {
     height: "100%",
     width: "100%",
@@ -264,7 +165,7 @@ const styles = StyleSheet.create({
   role: {
     fontFamily: FontFamily.pTSansCaption,
     height: 76,
-    width: 334,
+    width: "85%",
     fontSize: FontSize.size_13xl,
     color: Color.colorBlack,
   },
@@ -288,7 +189,7 @@ const styles = StyleSheet.create({
     marginTop: 61,
   },
   checkboxcheckedCheckboxAndParent: {
-    width: 334,
+    width: "85%",
     marginTop: 54,
   },
   approvalRequiredFor: {
@@ -303,25 +204,24 @@ const styles = StyleSheet.create({
   approvalRequiredForContainer: {
     color: Color.colorLightgray,
     fontFamily: FontFamily.pTSansRegular,
-    width: 334,
+    width: "85%",
     marginTop: 54,
   },
   continue: {
     top: 19,
-    left: 123,
     fontSize: FontSize.size_3xl,
-    textAlign: "left",
+    textAlign: "center",
     color: Color.colorBlack,
     fontFamily: FontFamily.pTSansBold,
     fontWeight: "700",
     lineHeight: 22,
-    position: "absolute",
+    position: "relative",
   },
   continueWrapper: {
     borderRadius: Border.br_3xs,
     backgroundColor: Color.colorGoldenrod_100,
     height: 60,
-    width: 334,
+    width: "85%",
     marginTop: 54,
   },
   roleselect: {

@@ -61,6 +61,8 @@ import StatePlaceholder from "./components/StatePlaceholder";
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import { IconRegistry, ApplicationProvider } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
+import { SwitchProvider } from './components/SwitchContext';
+import { TextInputProvider } from './components/TextInputContext';
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -90,6 +92,7 @@ function BottomTabsRoot({ navigation }) {
     <Settings11 />,
   ]);
   return (
+    
     <Tab.Navigator
       screenOptions={{ headerShown: false }}
       tabBar={({ state, descriptors, navigation }) => {
@@ -98,9 +101,11 @@ function BottomTabsRoot({ navigation }) {
           <View
             style={{
               backgroundColor: "#000",
-              width: 390,
+              width: "100%",
               height: 64,
               flexDirection: "row",
+              justifyContent: "space-between", // Spread items evenly
+              paddingHorizontal: 16, // Add padding for better spacings
             }}
           >
             {bottomTabItemsNormal.map((item, index) => {
@@ -208,6 +213,8 @@ const App = () => {
 
   return (
     <>
+    <SwitchProvider>
+    <TextInputProvider>
       <IconRegistry icons={[MaterialIconsPack]} />
       <ApplicationProvider {...eva} theme={eva.light}>
         <NavigationContainer>
@@ -272,16 +279,19 @@ const App = () => {
                 component={LanuageSelect}
                 options={{ headerShown: false }}
               />
+              
               <Stack.Screen
                 name="CreateProfile"
                 component={CreateProfile}
                 options={{ headerShown: false }}
               />
+              
               <Stack.Screen
                 name="CreateAccount"
                 component={CreateAccount}
                 options={{ headerShown: false }}
               />
+              
               <Stack.Screen
                 name="ResetPassword"
                 component={ResetPassword}
@@ -368,6 +378,8 @@ const App = () => {
           )}
         </NavigationContainer>
       </ApplicationProvider>
+      </TextInputProvider>
+      </SwitchProvider>
     </>
   );
 };

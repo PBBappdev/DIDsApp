@@ -1,18 +1,33 @@
-import React, { useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { ScrollView, Text, StyleSheet, View, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { Switch } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { FontSize, Color, FontFamily, Border } from "../GlobalStyles";
+import { useSwitchContext } from '../components/SwitchContext'; // Adjust the path
+import { Permissions } from 'expo';
+import * as Notifications from 'expo-notifications';
+
 
 const InitialNotifications = () => {
-  const [switchDefaultValue, setSwitchDefaultValue] = useState(true);
-  const [switchValue, setSwitchValue] = useState(undefined);
-  const [switch1Value, setSwitch1Value] = useState(undefined);
-  const [switch2Value, setSwitch2Value] = useState(undefined);
-  const [switch3Value, setSwitch3Value] = useState(undefined);
-  const [switch4Value, setSwitch4Value] = useState(undefined);
+  const { switchValues, setSwitchValue } = useSwitchContext();
   const navigation = useNavigation();
+
+  const requestNotificationPermissions = async () => {
+    try {
+      const { status } = await Notifications.requestPermissionsAsync();
+  
+      if (status === 'granted') {
+        // Notification permissions granted
+        console.log('Notification permissions granted');
+      } else {
+        // Notification permissions denied
+        console.log('Notification permissions denied');
+      }
+    } catch (error) {
+      console.error('Error requesting notification permissions:', error);
+    }
+  };
 
   return (
     <ScrollView
@@ -21,32 +36,6 @@ const InitialNotifications = () => {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.initialNotificationsScrollViewContent}
     >
-      <View style={styles.statusBar}>
-        <View style={[styles.time, styles.timePosition]}>
-          <Text style={styles.time1}>9:41</Text>
-        </View>
-        <View style={[styles.levels, styles.timePosition]}>
-          <View style={[styles.battery, styles.borderPosition]}>
-            <View style={[styles.border, styles.borderPosition]} />
-            <Image
-              style={[styles.capIcon, styles.iconPosition]}
-              contentFit="cover"
-              source={require("../assets/cap.png")}
-            />
-            <View style={[styles.capacity, styles.borderPosition]} />
-          </View>
-          <Image
-            style={[styles.wifiIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/wifi.png")}
-          />
-          <Image
-            style={[styles.cellularConnectionIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/cellular-connection.png")}
-          />
-        </View>
-      </View>
       <View style={styles.backArrowParent}>
         <Pressable
           style={styles.backArrow}
@@ -62,74 +51,102 @@ const InitialNotifications = () => {
           Notifications
         </Text>
       </View>
-      <View style={styles.backArrowParent}>
         <View style={styles.meetingRemindersParent}>
           <Text style={[styles.meetingReminders, styles.createAccountTypo]}>
             Meeting Reminders
           </Text>
           <Switch
             style={[styles.switchdefault, styles.switchLayout]}
-            value={switchDefaultValue}
-            onValueChange={setSwitchDefaultValue}
+            value={switchValues.switchValue5}
+            onValueChange={(value) => {
+              setSwitchValue('switchValue5', value);
+              if (value) {
+                requestNotificationPermissions();
+              }
+            }}
             color="#fbb042"
           />
         </View>
-        <View style={[styles.meetingChangesParent, styles.parentFlexBox]}>
+        <View style={ styles.parentFlexBox}>
           <Text style={[styles.meetingReminders, styles.createAccountTypo]}>
             Meeting Changes
           </Text>
           <Switch
             style={styles.switchLayout}
-            value={switchValue}
-            onValueChange={setSwitchValue}
+            value={switchValues.switchValue}
+            onValueChange={(value) => {
+              setSwitchValue('switchValue', value);
+              if (value) {
+                requestNotificationPermissions();
+              }
+            }}
             color="#fbb042"
           />
         </View>
-        <View style={styles.parentFlexBox}>
+        <View style={[styles.parentFlexBox]}>
           <Text style={[styles.meetingReminders, styles.createAccountTypo]}>
             News
           </Text>
           <Switch
-            style={styles.switch1}
-            value={switch1Value}
-            onValueChange={setSwitch1Value}
+            style={styles.switchLayout}
+            value={switchValues.switch1Value}
+            onValueChange={(value) => {
+              setSwitchValue('switchValue1', value);
+              if (value) {
+                requestNotificationPermissions();
+              }
+            }}
             color="#fbb042"
           />
         </View>
-        <View style={[styles.meetingChangesParent, styles.parentFlexBox]}>
+        <View style={[styles.parentFlexBox]}>
           <Text style={[styles.meetingReminders, styles.createAccountTypo]}>
             Role Change
           </Text>
           <Switch
-            style={styles.switch1}
-            value={switch2Value}
-            onValueChange={setSwitch2Value}
+            style={styles.switchLayout}
+            value={switchValues.switch2Value}
+            onValueChange={(value) => {
+              setSwitchValue('switchValue2', value);
+              if (value) {
+                requestNotificationPermissions();
+              }
+            }}
             color="#fbb042"
           />
         </View>
-        <View style={[styles.meetingChangesParent, styles.parentFlexBox]}>
+        <View style={[styles.parentFlexBox]}>
           <Text style={[styles.meetingReminders, styles.createAccountTypo]}>
             Rate Group
           </Text>
           <Switch
-            style={styles.switch1}
-            value={switch3Value}
-            onValueChange={setSwitch3Value}
+            style={styles.switchLayout}
+            value={switchValues.switch3Value}
+            onValueChange={(value) => {
+              setSwitchValue('switchValue3', value);
+              if (value) {
+                requestNotificationPermissions();
+              }
+            }}
             color="#fbb042"
           />
         </View>
-        <View style={[styles.meetingChangesParent, styles.parentFlexBox]}>
+        <View style={[styles.parentFlexBox]}>
           <Text style={[styles.meetingReminders, styles.createAccountTypo]}>
             Sign In at Group
           </Text>
           <Switch
-            style={styles.switch1}
-            value={switch4Value}
-            onValueChange={setSwitch4Value}
+            style={styles.switchLayout}
+            value={switchValues.switch4Value}
+            onValueChange={(value) => {
+              setSwitchValue('switchValue4', value);
+              if (value) {
+                requestNotificationPermissions();
+              }
+            }}
             color="#fbb042"
           />
         </View>
-      </View>
       <Pressable
         style={styles.createAccountWrapper}
         onPress={() =>
@@ -177,88 +194,13 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   switchLayout: {
-    marginLeft: 77,
-    height: 30,
+    marginLeft: -60,
     width: 60,
   },
   parentFlexBox: {
     marginTop: 30,
     flexDirection: "row",
     alignItems: "center",
-  },
-  time1: {
-    width: "26.31%",
-    top: "33.89%",
-    left: "36.94%",
-    fontSize: FontSize.size_mid,
-    textAlign: "center",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    fontFamily: FontFamily.pTSansBold,
-    fontWeight: "700",
-    position: "absolute",
-  },
-  time: {
-    right: "68.36%",
-    left: "-11.54%",
-  },
-  border: {
-    marginLeft: -13.65,
-    top: "0%",
-    bottom: "0%",
-    borderRadius: Border.br_8xs_3,
-    borderStyle: "solid",
-    borderColor: Color.colorBlack,
-    borderWidth: 1,
-    width: 25,
-    opacity: 0.35,
-    height: "100%",
-  },
-  capIcon: {
-    height: "31.54%",
-    marginLeft: 12.35,
-    top: "36.92%",
-    bottom: "31.54%",
-    width: 1,
-    opacity: 0.4,
-  },
-  capacity: {
-    height: "69.23%",
-    marginLeft: -11.65,
-    top: "15.38%",
-    bottom: "15.38%",
-    borderRadius: Border.br_10xs_5,
-    backgroundColor: Color.colorBlack,
-    width: 21,
-  },
-  battery: {
-    height: "24.07%",
-    marginLeft: 10.8,
-    top: "42.59%",
-    bottom: "33.33%",
-    width: 27,
-  },
-  wifiIcon: {
-    height: "22.78%",
-    marginLeft: -13.5,
-    top: "43.7%",
-    bottom: "33.52%",
-    width: 17,
-  },
-  cellularConnectionIcon: {
-    height: "22.59%",
-    marginLeft: -40.2,
-    top: "43.52%",
-    bottom: "33.89%",
-    width: 19,
-  },
-  levels: {
-    right: "-9.23%",
-    left: "66.05%",
-  },
-  statusBar: {
-    alignSelf: "stretch",
-    height: 32,
   },
   icon: {
     height: "100%",
@@ -277,14 +219,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     display: "flex",
     color: Color.colorBlack,
-    lineHeight: 22,
+    lineHeight: 40,
   },
   backArrowParent: {
     marginTop: 66,
   },
   meetingReminders: {
     fontFamily: FontFamily.pTSansRegular,
-    width: 188,
+    width: "85%",
     height: 41,
     alignItems: "center",
     display: "flex",
@@ -294,18 +236,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   meetingRemindersParent: {
-    width: 325,
+    width: "100%",
     justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
   },
   meetingChangesParent: {
     justifyContent: "center",
-  },
-  switch1: {
-    marginLeft: 75,
-    height: 30,
-    width: 60,
   },
   createAccount: {
     top: 19,

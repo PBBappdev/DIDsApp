@@ -8,6 +8,10 @@ import {
   View,
   Pressable,
   ImageBackground,
+  FlatList,
+  Modal,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Image } from "expo-image";
@@ -15,10 +19,14 @@ import StatePlaceholder from "../components/StatePlaceholder";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
+
 const Meetings1 = () => {
+  StatusBar.setBackgroundColor("#FBB042");
+
   const [dayOpen, setDayOpen] = useState(false);
   const [dayValue, setDayValue] = useState();
   const [dayItems, setDayItems] = useState([
+    { value: "All", label: "Any Day" },
     { value: "Mon", label: "Mon" },
     { value: "Tue", label: "Tue" },
     { value: "Wed", label: "Wed" },
@@ -39,6 +47,28 @@ const Meetings1 = () => {
     { value: "SA", label: "SA" },
   ]);
   const navigation = useNavigation();
+
+  const [isDayModalVisible, setDayModalVisible] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
+
+  const openDayModal = () => setDayModalVisible(true);
+  const closeDayModal = () => setDayModalVisible(false);
+
+  const handleDaySelect = (item) => {
+    setDayValue(item.value);
+    setSelectedDay(item);
+    closeDayModal();
+  };
+
+  const [isStateModalVisible, setStateModalVisible] = useState(false);
+
+  const openStateModal = () => setStateModalVisible(true);
+  const closeStateModal = () => setStateModalVisible(false);
+
+  const handleStateSelect = (item) => {
+    setStateValue(item.value);
+    closeStateModal();
+  };
 
   return (
     <ScrollView
@@ -71,30 +101,78 @@ const Meetings1 = () => {
         <View style={styles.frameWrapper}>
           <View style={styles.dayParent}>
             <View style={styles.day}>
-              <DropDownPicker
-                style={styles.dropdownpicker}
-                open={dayOpen}
-                setOpen={setDayOpen}
-                value={dayValue}
-                setValue={setDayValue}
-                placeholder="Day"
-                items={dayItems}
-                labelStyle={styles.dayValue}
-                dropDownContainerStyle={styles.daydropDownContainer}
-              />
+              <TouchableOpacity onPress={openDayModal}>
+                <Text style={styles.dayValue}>
+                  {selectedDay ? selectedDay.label : "Select Day"}
+                </Text>
+              </TouchableOpacity>
+               {/* Day Modal */}
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isDayModalVisible}
+                onRequestClose={closeDayModal}
+              >
+              <View style={styles.modalContainer}>
+              <TouchableWithoutFeedback onPress={closeDayModal}>
+            <View style={styles.overlay} />
+          </TouchableWithoutFeedback>
+                <View style={styles.modalContent}>
+                  <FlatList
+                    data={dayItems}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={styles.modalItem}
+                        onPress={() => handleDaySelect(item)}
+                      >
+                        <Text>{item.label}</Text>
+                      </TouchableOpacity>
+                    )}
+                    keyExtractor={(item) => item.value}
+                  />
+                </View>
+              </View>
+            </Modal>
             </View>
-            <View style={[styles.state, styles.stateSpaceBlock]}>
-              <DropDownPicker
-                style={styles.dropdownpicker}
-                open={stateOpen}
-                setOpen={setStateOpen}
-                value={stateValue}
-                setValue={setStateValue}
-                placeholder="State"
-                items={stateItems}
-                labelStyle={styles.stateValue}
-                dropDownContainerStyle={styles.statedropDownContainer}
-              />
+
+            <View style={[styles.dayParent, styles.day]}>
+              <TouchableOpacity onPress={openStateModal}>
+                <Text style={styles.dayValue}>
+                  {selectedDay ? selectedDay.label : "Select State"}
+                </Text>
+              </TouchableOpacity>
+              {/* State Modal */}
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isStateModalVisible}
+                onRequestClose={closeStateModal}
+              >
+                <View style={styles.modalContainer}>
+                  <TouchableWithoutFeedback onPress={closeStateModal}>
+                    <View style={styles.overlay} />
+                  </TouchableWithoutFeedback>
+                  <View style={styles.modalContent}>
+                    {/* Down Arrow Icon */}
+                    <Image
+                      style={styles.downArrowIcon}
+                      source={require("../assets/sort-left.png")}
+                    />
+                    <FlatList
+                      data={stateItems}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          style={styles.modalItem}
+                          onPress={() => handleStateSelect(item)}
+                        >
+                          <Text>{item.label}</Text>
+                        </TouchableOpacity>
+                      )}
+                      keyExtractor={(item) => item.value}
+                    />
+                  </View>
+                </View>
+              </Modal>
             </View>
             <Pressable
               style={[styles.cancel, styles.stateSpaceBlock]}
@@ -124,7 +202,7 @@ const Meetings1 = () => {
             onPress={() => navigation.navigate("MeetingInfo")}
           >
             <Text
-              style={[styles.gosfordThursday, styles.onlineFriday2Typo]}
+              style={[styles.locationText, styles.locationTextLayout]}
               numberOfLines={1}
             >
               Gosford, Thursday
@@ -133,7 +211,7 @@ const Meetings1 = () => {
               14/12 - 18:00
             </Text>
             <Image
-              style={[styles.minusIcon, styles.iconLayout]}
+              style={[styles.Icon, styles.iconLayout]}
               contentFit="cover"
               source={require("../assets/minus2.png")}
             />
@@ -142,14 +220,14 @@ const Meetings1 = () => {
             style={[styles.onlineTuesdayParent, styles.tuesdayParentLayout]}
             onPress={() => navigation.navigate("MeetingInfo")}
           >
-            <Text style={[styles.onlineTuesday, styles.onlineTypo]}>
+            <Text style={[styles.locationText, styles.locationTextLayout]}>
               Online, Tuesday
             </Text>
-            <Text style={[styles.text1, styles.textLayout1]}>
+            <Text style={[styles.text, styles.textLayout1]}>
               19/12 - 18:50
             </Text>
             <Image
-              style={[styles.minusIcon1, styles.minusIcon1Position]}
+              style={[styles.Icon, styles.iconLayout]}
               contentFit="cover"
               source={require("../assets/minus2.png")}
             />
@@ -165,12 +243,12 @@ const Meetings1 = () => {
             style={styles.tuesdayParentLayout}
             onPress={() => navigation.navigate("MeetingInfo")}
           >
-            <Text style={[styles.onlineTuesday1, styles.onlineTypo]}>
+            <Text style={[styles.locationText, styles.locationTextLayout]}>
               Online, Tuesday
             </Text>
-            <Text style={[styles.text2, styles.textLayout]}>19/12 - 18:50</Text>
+            <Text style={[styles.text, styles.textLayout1]}>19/12 - 18:50</Text>
             <Image
-              style={[styles.plusIcon, styles.iconLayout]}
+              style={[styles.Icon, styles.iconLayout]}
               contentFit="cover"
               source={require("../assets/plus31.png")}
             />
@@ -179,12 +257,12 @@ const Meetings1 = () => {
             style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
             onPress={() => navigation.navigate("MeetingInfo")}
           >
-            <Text style={[styles.onlineTuesday1, styles.onlineTypo]}>
+            <Text style={[styles.locationText, styles.locationTextLayout]}>
               Bayswater, Tuesday
             </Text>
-            <Text style={[styles.text2, styles.textLayout]}>19/12 - 18:50</Text>
+            <Text style={[styles.text, styles.textLayout1]}>19/12 - 18:50</Text>
             <Image
-              style={[styles.plusIcon, styles.iconLayout]}
+              style={[styles.Icon, styles.iconLayout]}
               contentFit="cover"
               source={require("../assets/plus31.png")}
             />
@@ -198,7 +276,7 @@ const Meetings1 = () => {
             </Text>
             <Text style={[styles.text4, styles.text4Text]}>20/12 - 18:50</Text>
             <Image
-              style={[styles.plusIcon, styles.iconLayout]}
+              style={[styles.Icon, styles.iconLayout]}
               contentFit="cover"
               source={require("../assets/plus31.png")}
             />
@@ -207,12 +285,12 @@ const Meetings1 = () => {
             style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
             onPress={() => navigation.navigate("MeetingInfo")}
           >
-            <Text style={[styles.onlineTuesday1, styles.onlineTypo]}>
+            <Text style={[styles.locationText, styles.locationTextLayout]}>
               Online, Friday
             </Text>
-            <Text style={[styles.text2, styles.textLayout]}>20/12 - 18:50</Text>
+            <Text style={[styles.text, styles.textLayout1]}>20/12 - 18:50</Text>
             <Image
-              style={[styles.plusIcon, styles.iconLayout]}
+              style={[styles.Icon, styles.iconLayout]}
               contentFit="cover"
               source={require("../assets/plus31.png")}
             />
@@ -221,12 +299,12 @@ const Meetings1 = () => {
             style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
             onPress={() => navigation.navigate("MeetingInfo")}
           >
-            <Text style={[styles.onlineFriday2, styles.onlineFriday2Typo]}>
+            <Text style={[styles.locationText, styles.locationTextLayout]}>
               Online, Friday
             </Text>
-            <Text style={[styles.text2, styles.textLayout]}>20/12 - 18:50</Text>
+            <Text style={[styles.text, styles.textLayout1]}>20/12 - 18:50</Text>
             <Image
-              style={[styles.plusIcon, styles.iconLayout]}
+              style={[styles.Icon, styles.iconLayout]}
               contentFit="cover"
               source={require("../assets/plus31.png")}
             />
@@ -235,12 +313,12 @@ const Meetings1 = () => {
             style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
             onPress={() => navigation.navigate("MeetingInfo")}
           >
-            <Text style={[styles.onlineFriday2, styles.onlineFriday2Typo]}>
+            <Text style={[styles.locationText, styles.locationTextLayout]}>
               Online, Friday
             </Text>
-            <Text style={[styles.text2, styles.textLayout]}>20/12 - 18:50</Text>
+            <Text style={[styles.text, styles.textLayout1]}>20/12 - 18:50</Text>
             <Image
-              style={[styles.plusIcon, styles.iconLayout]}
+              style={[styles.Icon, styles.iconLayout]}
               contentFit="cover"
               source={require("../assets/plus31.png")}
             />
@@ -257,9 +335,12 @@ const Meetings1 = () => {
 };
 
 const styles = StyleSheet.create({
-  dayValue: {
+  dayValue: { //Day text
+    marginTop: 9,
+    marginLeft: 5, 
     color: "#fff",
     fontSize: 16,
+    backgroundColor: '#FBB042',
     fontFamily: "PTSans-Regular",
   },
   daydropDownContainer: {
@@ -279,8 +360,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   searchbarPosition: {
-    left: 17,
-    position: "absolute",
+    marginLeft: 17,
+    position: "relative",
   },
   stateSpaceBlock: {
     marginLeft: 35,
@@ -295,7 +376,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontSize: FontSize.title3Bold_size,
   },
-  onlineFriday2Typo: {
+  locationTextLayout: {
     height: 30,
     fontFamily: FontFamily.pTSansCaptionBold,
     fontWeight: "700",
@@ -344,15 +425,8 @@ const styles = StyleSheet.create({
     top: 1,
     position: "absolute",
   },
-  textLayout: {
-    top: 33,
-    height: 31,
-    width: 220,
-    fontFamily: FontFamily.pTSansCaption,
-    fontSize: FontSize.size_lgi,
-  },
   text4Text: {
-    textDecoration: "line-through",
+    textDecorationLine: "line-through",
     color: Color.colorTomato_100,
     alignItems: "center",
     display: "flex",
@@ -361,33 +435,32 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     position: "absolute",
   },
-  meetings1Typo: {
-    textAlign: "center",
-    fontSize: FontSize.size_xs,
-    fontFamily: FontFamily.pTSansCaption,
-    lineHeight: 22,
-  },
   signInSpaceBlock: {
     marginLeft: 38,
     alignItems: "center",
   },
   searchbar: {
-    width: 361,
+    width: 360,
     height: 36,
     top: 14,
   },
   searchbarWrapper: {
     height: 70,
-    width: 390,
+    width: '100%',
+    zIndex: 2,
     backgroundColor: Color.colorGoldenrod_100,
+    position: 'relative'
   },
   dropdownpicker: {
     backgroundColor: Color.colorGoldenrod_100,
   },
-  day: {
+  day: { //frame for day
     width: 115,
-    height: 34,
-    borderRadius: Border.br_8xs,
+    height: 40,
+    marginTop: 5,
+    borderRadius: 10,
+    backgroundColor: '#FBB042',
+    position: 'relative',
   },
   state: {
     width: 121,
@@ -401,20 +474,23 @@ const styles = StyleSheet.create({
   cancel: {
     width: 34,
   },
-  dayParent: {
+  dayParent: { 
     left: 21,
-    width: 341,
+    width: '87%',
     flexDirection: "row",
-    top: 14,
+    marginTop: 11,
     position: "absolute",
+    
   },
   frameWrapper: {
     backgroundColor: "rgba(251, 176, 66, 0.6)",
     height: 72,
-    width: 390,
+    width: '100%',
+    position: 'relative'
   },
   statusBarParent: {
     zIndex: 0,
+    width: '100%',
   },
   savedGroups1: {
     top: 2,
@@ -434,18 +510,16 @@ const styles = StyleSheet.create({
     height: 0,
     position: "absolute",
   },
-  gosfordThursday: {
-    width: 292,
+  locationText: {
+    width: '80%',
     left: 14,
   },
   text: {
     left: 13,
   },
-  minusIcon: {
-    left: 306,
-    width: 39,
-    top: 0,
-    position: "absolute",
+  Icon: {
+    marginLeft: '80%',
+    position: "relative",
   },
   onlineTuesday: {
     top: 5,
@@ -456,14 +530,6 @@ const styles = StyleSheet.create({
     color: Color.colorBlack,
     lineHeight: 22,
     position: "absolute",
-  },
-  text1: {
-    left: 14,
-  },
-  minusIcon1: {
-    height: 39,
-    width: 39,
-    left: 306,
   },
   onlineTuesdayParent: {
     marginTop: 18,
@@ -500,15 +566,6 @@ const styles = StyleSheet.create({
     top: 4,
     width: 293,
   },
-  text2: {
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    position: "absolute",
-    left: 14,
-  },
   plusIcon: {
     left: 307,
     top: 0,
@@ -534,10 +591,6 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.pTSansCaption,
     fontSize: FontSize.size_lgi,
   },
-  onlineFriday2: {
-    width: 245,
-    left: 13,
-  },
   allGroups: {
     height: 508,
     zIndex: 2,
@@ -545,10 +598,35 @@ const styles = StyleSheet.create({
     marginTop: 17,
   },
   searchIcon: {
-    top: 55,
+    top: 10,
     width: 25,
     height: 25,
     zIndex: 4,
+  },
+  modalContainer: {
+    flex: 1,
+    zIndex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#FBB042",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    padding: 16,
+  },
+  modalItem: {
+    paddingVertical: 10,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  downArrowIcon: {
+    width: 20,
+    height: 20,
+    alignSelf: 'center',
+    marginBottom: 10, // Adjust the margin as needed
   },
   meetings: {
     backgroundColor: Color.colorWhite,

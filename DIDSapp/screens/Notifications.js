@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ScrollView,
   StatusBar,
@@ -11,6 +11,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { Switch } from "react-native-paper";
 import { Color, FontSize, FontFamily } from "../GlobalStyles";
+import { requestPermissionsAsync } from "expo-notifications";
+
+
+const requestNotificationPermissions = async () => {
+  try {
+    const { granted } = await requestPermissionsAsync();
+    if (!granted) {
+      console.log("Notification permission denied");
+      // You can handle the case where permission is denied
+    }
+  } catch (error) {
+    console.error("Error requesting notification permissions:", error);
+  }
+};
 
 const Notifications = () => {
   const [toggleOnValue, setToggleOnValue] = useState(true);

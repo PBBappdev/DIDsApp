@@ -22,7 +22,7 @@ const Helpline4 = ({ style }) => {
       <Image
         style={styles.headsetIcon}
         contentFit="cover"
-        source={require("../assets/headset1.png")}
+        source={require("../assets/headset.png")}
       />
       <Text style={styles.helpline1}>Helpline</Text>
     </Pressable>

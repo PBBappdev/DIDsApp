@@ -16,32 +16,7 @@ const Welcome = () => {
 
   return (
     <View style={styles.welcome}>
-      <View style={styles.statusBar}>
-        <View style={[styles.time, styles.timePosition]}>
-          <Text style={[styles.time1, styles.orTypo]}>9:41</Text>
-        </View>
-        <View style={[styles.levels, styles.timePosition]}>
-          <View style={[styles.battery, styles.batteryPosition]}>
-            <View style={styles.border} />
-            <Image
-              style={[styles.capIcon, styles.iconPosition]}
-              contentFit="cover"
-              source={require("../assets/cap.png")}
-            />
-            <View style={[styles.capacity, styles.batteryPosition]} />
-          </View>
-          <Image
-            style={[styles.wifiIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/wifi.png")}
-          />
-          <Image
-            style={[styles.cellularConnectionIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/cellular-connection.png")}
-          />
-        </View>
-      </View>
+      
       <Image
         style={styles.didsLogoIcon}
         contentFit="cover"
@@ -66,11 +41,10 @@ const Welcome = () => {
       </View>
       <Text
         style={[styles.alreadyHaveAn, styles.orTypo]}
-      >{`Already have an account?
-`}</Text>
+      >{`Already have an account?`}</Text>
       <TouchableHighlight
         style={styles.logIn}
-        underlayColor="rgba(240, 73, 55, 0.8)"
+        underlayColor="#FBB042"
         onPress={() => navigation.navigate("Login")}
       >
         <Text style={[styles.logIn1, styles.orTypo]}>Log in</Text>
@@ -96,10 +70,11 @@ const styles = StyleSheet.create({
   },
   frameButtonBtn1: {
     position: "relative",
+    paddingTop: 10,
+    width: "85%",
   },
   frameButtonBtn2: {
     borderRadius: 10,
-    width: 334,
     height: 60,
   },
   timePosition: {
@@ -214,7 +189,7 @@ const styles = StyleSheet.create({
     marginTop: 45,
   },
   welcomeChild: {
-    marginTop: 45,
+    marginTop: 5,
   },
   or: {
     marginLeft: 13,
@@ -234,9 +209,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   alreadyHaveAn: {
-    width: 199,
+    width: "85%",
     height: 22,
-    marginTop: 45,
+    marginTop: "10%",
     color: Color.colorBlack,
     textAlign: "center",
     fontFamily: FontFamily.pTSansBold,
@@ -253,7 +228,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_mid,
   },
   logIn: {
-    marginTop: 45,
+    marginTop: "10%",
   },
   byUsingOur: {
     color: Color.colorLightgray,
@@ -266,9 +241,9 @@ const styles = StyleSheet.create({
   },
   byUsingOurContainer: {
     display: "flex",
-    width: 334,
+    width: "85%",
     height: 73,
-    marginTop: 45,
+    marginTop: "10%",
     textAlign: "center",
     fontFamily: FontFamily.pTSansBold,
     fontWeight: "700",
@@ -277,9 +252,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   welcome: {
+    paddingTop: "15%",
     backgroundColor: Color.colorWhite,
     flex: 1,
-    height: 844,
+    height: "100%",
     overflow: "hidden",
     alignItems: "center",
     width: "100%",

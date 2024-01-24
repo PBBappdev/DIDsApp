@@ -15,32 +15,6 @@ const Login = () => {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.loginScrollViewContent}
     >
-      <View style={styles.statusBar}>
-        <View style={[styles.time, styles.timePosition]}>
-          <Text style={[styles.time1, styles.time1Typo]}>9:41</Text>
-        </View>
-        <View style={[styles.levels, styles.timePosition]}>
-          <View style={[styles.battery, styles.batteryPosition]}>
-            <View style={styles.border} />
-            <Image
-              style={[styles.capIcon, styles.iconPosition]}
-              contentFit="cover"
-              source={require("../assets/cap.png")}
-            />
-            <View style={[styles.capacity, styles.batteryPosition]} />
-          </View>
-          <Image
-            style={[styles.wifiIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/wifi.png")}
-          />
-          <Image
-            style={[styles.cellularConnectionIcon, styles.iconPosition]}
-            contentFit="cover"
-            source={require("../assets/cellular-connection.png")}
-          />
-        </View>
-      </View>
       <View style={styles.backArrowParent}>
         <Pressable
           style={styles.backArrow}
@@ -114,51 +88,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  timePosition: {
-    height: 54,
-    top: "50%",
-    width: "43.18%",
-    marginTop: -24,
-    position: "absolute",
-  },
-  time1Typo: {
-    textAlign: "center",
-    fontFamily: FontFamily.pTSansBold,
-    fontWeight: "700",
-  },
-  batteryPosition: {
-    left: "50%",
-    position: "absolute",
-  },
-  iconPosition: {
-    maxHeight: "100%",
-    left: "50%",
-    position: "absolute",
-  },
+  
   logInFlexBox: {
     alignItems: "center",
     display: "flex",
-    lineHeight: 22,
   },
   frameLayout: {
     height: 72,
     borderRadius: Border.br_8xs,
     width: 334,
     borderStyle: "solid",
-  },
-  time1: {
-    width: "26.31%",
-    top: "33.89%",
-    left: "36.94%",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    textAlign: "center",
-    fontSize: FontSize.size_mid,
-    position: "absolute",
-  },
-  time: {
-    right: "68.36%",
-    left: "-11.54%",
   },
   border: {
     marginLeft: -13.65,
@@ -173,52 +112,6 @@ const styles = StyleSheet.create({
     height: "100%",
     left: "50%",
     position: "absolute",
-  },
-  capIcon: {
-    height: "31.54%",
-    marginLeft: 12.35,
-    top: "36.92%",
-    bottom: "31.54%",
-    width: 1,
-    opacity: 0.4,
-  },
-  capacity: {
-    height: "69.23%",
-    marginLeft: -11.65,
-    top: "15.38%",
-    bottom: "15.38%",
-    borderRadius: Border.br_10xs_5,
-    backgroundColor: Color.colorBlack,
-    width: 21,
-  },
-  battery: {
-    height: "24.07%",
-    marginLeft: 10.8,
-    top: "42.59%",
-    bottom: "33.33%",
-    width: 27,
-  },
-  wifiIcon: {
-    height: "22.78%",
-    marginLeft: -13.5,
-    top: "43.7%",
-    bottom: "33.52%",
-    width: 17,
-  },
-  cellularConnectionIcon: {
-    height: "22.59%",
-    marginLeft: -40.2,
-    top: "43.52%",
-    bottom: "33.89%",
-    width: 19,
-  },
-  levels: {
-    right: "-9.23%",
-    left: "66.05%",
-  },
-  statusBar: {
-    alignSelf: "stretch",
-    height: 32,
   },
   icon: {
     height: "100%",
@@ -247,7 +140,7 @@ const styles = StyleSheet.create({
     width: 334,
   },
   forgotPassword1: {
-    textDecoration: "underline",
+    textDecorationLine: "underline",
     width: 129,
     color: Color.colorTomato_100,
     textAlign: "left",
@@ -265,16 +158,13 @@ const styles = StyleSheet.create({
   },
   logIn: {
     top: 19,
-    left: 138,
     fontSize: FontSize.size_3xl,
-    justifyContent: "center",
-    width: 58,
     textAlign: "center",
+    color: Color.colorBlack,
     fontFamily: FontFamily.pTSansBold,
     fontWeight: "700",
-    color: Color.colorBlack,
-    display: "flex",
-    position: "absolute",
+    lineHeight: 22,
+    position: "relative",
   },
   logInWrapper: {
     borderRadius: Border.br_3xs,
