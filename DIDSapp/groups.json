@@ -1,0 +1,19 @@
+{
+    "savedGroups": [
+      { "location": "Gosford, Thursday", "time": "14/12 - 18:00" },
+      { "location": "Online, Tuesday", "time": "19/12 - 18:50" },
+      { "location": "Online, Tuesday", "time": "19/12 - 18:50" },
+      { "location": "Online, Tuesday", "time": "19/12 - 18:50" },
+      { "location": "Online, Monday", "time": "19/12 - 18:50" }
+      
+    ],
+    "groups": [
+      { "location": "Online, Tuesday", "time": "19/12 - 18:50" },
+      { "location": "Bayswater, Tuesday", "time": "19/12 - 18:50" },
+      { "location": "Gosford, Friday", "time": "20/12 - 18:50" },
+      { "location": "Online, Wednesday", "time": "19/12 - 18:50" },
+      { "location": "Online, Tuesday", "time": "19/12 - 18:50" }
+      
+    ]
+  }
+  

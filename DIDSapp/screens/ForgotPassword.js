@@ -12,18 +12,21 @@ const ForgotPassword = () => {
     <View style={styles.forgotpassword}>
       
       <View style={styles.backArrowParent}>
-        <Pressable style={styles.backArrow} onPress={() => navigation.goBack()}>
+        <Pressable
+          style={styles.backArrow}
+          onPress={() => navigation.navigate("Login")}
+        >
           <Image
             style={styles.icon}
             contentFit="cover"
             source={require("../assets/back-arrow.png")}
-          />
+          /> 
         </Pressable>
-        <Text style={[styles.forgotPassword, styles.passwordClr]}>
+        <Text style={[styles.forgotPassword, styles.fpasswordFlexBox]}>
           Forgot Password
         </Text>
       </View>
-      <Text style={[styles.enterYourEmail, styles.passwordClr]}>
+      <Text style={[styles.enterYourEmail]}>
         Enter your email and we will send you a password reset link.
       </Text>
       <RNPTextInput
@@ -41,7 +44,7 @@ const ForgotPassword = () => {
         style={styles.resetPasswordWrapper}
         onPress={() => navigation.navigate("ResetPassword")}
       >
-        <Text style={[styles.resetPassword, styles.passwordClr]}>
+        <Text style={[styles.resetPassword]}>
           Reset Password
         </Text>
       </Pressable>
@@ -50,113 +53,18 @@ const ForgotPassword = () => {
 };
 
 const styles = StyleSheet.create({
-  timePosition: {
-    height: 54,
-    top: "50%",
-    width: "43.18%",
-    marginTop: -24,
-    position: "absolute",
+  backArrow: {
+    width: 40,
+    height: 40,
+    zIndex: 1,
   },
-  time1Typo: {
-    textAlign: "center",
-    fontFamily: FontFamily.pTSansBold,
-    fontWeight: "700",
-    position: "absolute",
-  },
-  borderPosition: {
-    left: "50%",
-    position: "absolute",
-  },
-  iconPosition: {
-    maxHeight: "100%",
-    left: "50%",
-    position: "absolute",
-  },
-  passwordClr: {
-    display: "flex",
-    color: Color.colorBlack,
+  fpasswordFlexBox: {
     alignItems: "center",
-  },
-  time1: {
-    width: "26.31%",
-    top: "33.89%",
-    left: "36.94%",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    textAlign: "center",
-    fontFamily: FontFamily.pTSansBold,
-    fontWeight: "700",
-    fontSize: FontSize.size_mid,
-  },
-  time: {
-    right: "68.36%",
-    left: "-11.54%",
-  },
-  border: {
-    marginLeft: -13.65,
-    top: "0%",
-    bottom: "0%",
-    borderRadius: Border.br_8xs_3,
-    borderColor: Color.colorBlack,
-    borderWidth: 1,
-    width: 25,
-    opacity: 0.35,
-    borderStyle: "solid",
-    height: "100%",
-  },
-  capIcon: {
-    height: "31.54%",
-    marginLeft: 12.35,
-    top: "36.92%",
-    bottom: "31.54%",
-    width: 1,
-    opacity: 0.4,
-  },
-  capacity: {
-    height: "69.23%",
-    marginLeft: -11.65,
-    top: "15.38%",
-    bottom: "15.38%",
-    borderRadius: Border.br_10xs_5,
-    backgroundColor: Color.colorBlack,
-    width: 21,
-  },
-  battery: {
-    height: "24.07%",
-    marginLeft: 10.8,
-    top: "42.59%",
-    bottom: "33.33%",
-    width: 27,
-  },
-  wifiIcon: {
-    height: "22.78%",
-    marginLeft: -13.5,
-    top: "43.7%",
-    bottom: "33.52%",
-    width: 17,
-  },
-  cellularConnectionIcon: {
-    height: "22.59%",
-    marginLeft: -40.2,
-    top: "43.52%",
-    bottom: "33.89%",
-    width: 19,
-  },
-  levels: {
-    right: "-9.23%",
-    left: "66.05%",
-  },
-  statusBar: {
-    alignSelf: "stretch",
-    height: 32,
+    display: "flex",
   },
   icon: {
     height: "100%",
     width: "100%",
-  },
-  backArrow: {
-    width: 40,
-    height: 40,
   },
   forgotPassword: {
     fontSize: FontSize.size_13xl,
@@ -165,9 +73,12 @@ const styles = StyleSheet.create({
     width: 334,
     textAlign: "left",
     display: "flex",
+    marginTop: 20, // Adjusted marginTop for better positioning
   },
   backArrowParent: {
     marginTop: 53,
+    flexDirection: 'column', // Ensure that the children are laid out horizontally
+    alignItems: 'flex-start', // Center items vertically
   },
   enterYourEmail: {
     fontFamily: FontFamily.pTSansRegular,
@@ -187,28 +98,27 @@ const styles = StyleSheet.create({
   },
   resetPassword: {
     top: 19,
-    left: 75,
     fontSize: FontSize.size_3xl,
-    justifyContent: "center",
-    width: 180,
     textAlign: "center",
+    color: Color.colorBlack,
     fontFamily: FontFamily.pTSansBold,
     fontWeight: "700",
-    position: "absolute",
-    display: "flex",
+    lineHeight: 22,
+    position: "relative",
   },
   resetPasswordWrapper: {
+    position: "relative",
+    marginTop: 30,
     borderRadius: Border.br_3xs,
     backgroundColor: Color.colorGoldenrod_100,
     height: 60,
-    width: 334,
-    marginTop: 53,
+    width: '80%',
   },
   forgotpassword: {
     backgroundColor: Color.colorWhite,
     flex: 1,
-    height: 844,
-    overflow: "hidden",
+    height: "100%",
+    overflow: "visible",
     alignItems: "center",
     width: "100%",
   },

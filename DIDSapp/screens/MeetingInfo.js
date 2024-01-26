@@ -1,40 +1,66 @@
 import * as React from "react";
-import { StatusBar, StyleSheet, Text, Pressable, View } from "react-native";
+import { StatusBar, StyleSheet, Text, Pressable, View, Linking  } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Color, FontSize, FontFamily } from "../GlobalStyles";
 
 const MeetingInfo = () => {
+  const [isSaved, setIsSaved] = React.useState(false);
+
+  const toggleSave = () => {
+    setIsSaved(!isSaved);
+  };
+
+  const locationText = "Gosford Narara Community center 2 pandala Rd, Narara NSW 2250";
+  const descriptionText = `FREE weekly Dads in Distress support meeting for all local dads. No need to book, just drop in and new dads always welcome. Confidential, and non judgmental and dad friendly. Free parking on road outside. Find us in the 'Living Room' upstairs.`;
+
+  const openGoogleMaps = () => {
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationText)}`;
+    Linking.openURL(googleMapsUrl);
+  };
   return (
     <View style={styles.meetinginfo}>
       <StatusBar style={styles.viewPosition} barStyle="default" />
+      
+      <Pressable style={[styles.saveGroupParent, styles.plusIconLayout]}
+       onPress={toggleSave}
+       >
+        <Text style={[styles.saveGroup, styles.mapTypo]}>
+        {isSaved ? "Remove Group" : "Save Group"}
+        </Text>
+        <Image
+          style={[styles.plusIcon, styles.plusIconLayout]}
+          contentFit="cover"
+          source={
+            isSaved
+              ? require("../assets/minus2.png") // Use the minus icon when saved
+              : require("../assets/plus1.png") // Use the plus icon when not saved
+          }
+        />
+      </Pressable>
       <Image
         style={[styles.meetinginfoChild, styles.meetinginfoLayout]}
         contentFit="cover"
         source={require("../assets/line-6.png")}
       />
+
+      <Text
+        style={[styles.locationText, styles.saveGroupFlexBox]}
+      >{locationText}</Text>
+      <Pressable>
+      <Text style={[styles.map, styles.mapTypo]}
+      onPress={openGoogleMaps}
+      >Map</Text>
+      </Pressable>
       <Image
         style={[styles.meetinginfoItem, styles.meetinginfoLayout]}
         contentFit="cover"
         source={require("../assets/line-6.png")}
       />
+
       <Text
-        style={[styles.gosfordNararaCommunity, styles.saveGroupFlexBox]}
-      >{`Gosford Narara Community center 
-2 pandala Rd, Narara NSW 2250`}</Text>
-      <Text style={[styles.map, styles.mapTypo]}>Map</Text>
-      <Pressable style={[styles.saveGroupParent, styles.plusIconLayout]}>
-        <Text style={[styles.saveGroup, styles.mapTypo]}>Save Group</Text>
-        <Image
-          style={[styles.plusIcon, styles.plusIconLayout]}
-          contentFit="cover"
-          source={require("../assets/plus1.png")}
-        />
-      </Pressable>
-      <Text
-        style={[styles.freeWeeklyDads, styles.saveGroupFlexBox]}
-      >{`FREE weekly Dads in Distress support meeting 
-for all local dads. No need to book, just drop in and new dads always welcome. Confidential, and non judgmental and dad friendly. Free parking on road outside. Find us in the 'Living Room' upstairs.`}</Text>
+        style={[styles.descriptionText, styles.saveGroupFlexBox]}
+      >{descriptionText}</Text>
     </View>
   );
 };
@@ -44,27 +70,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#fbb042",
   },
   viewPosition: {
-    width: 390,
+    width: "100%",
     position: "absolute",
     left: 0,
   },
   meetinginfoLayout: {
-    width: 345,
+    right: 22,
     maxHeight: "100%",
     left: 22,
-    position: "absolute",
+    height: 2,
+    position: "relative",
   },
-  saveGroupFlexBox: {
-    alignItems: "center",
-    display: "flex",
-    color: Color.colorBlack,
+  meetinginfoItem: {
+    position: 'relative',
+    marginTop: 20,
+    marginBottom: 10,
   },
+
   plusIconLayout: {
     height: 40,
     position: "absolute",
   },
   textPosition: {
-    lineHeight: 22,
+    lineHeight: 30,
     left: 79,
     alignItems: "center",
     display: "flex",
@@ -72,61 +100,66 @@ const styles = StyleSheet.create({
     color: Color.colorBlack,
     position: "absolute",
   },
-  mapTypo: {
-    fontSize: FontSize.size_5xl,
-    lineHeight: 22,
-    textAlign: "left",
-    fontFamily: FontFamily.pTSansRegular,
-    position: "absolute",
-  },
+  
   meetinginfoChild: {
-    top: 184,
+    marginTop: 60,
+    postion: 'relative',
   },
-  meetinginfoItem: {
-    top: 324,
+  saveGroupFlexBox: {
+    alignItems: "center",
+    display: "flex",
+    maxWidth: '90%',
+    color: Color.colorBlack,
   },
-  gosfordNararaCommunity: {
-    top: 198,
+  locationText: {
+    marginTop: 10,
     fontSize: FontSize.size_3xl,
     lineHeight: 29,
-    height: 74,
+    height: 60,
     textAlign: "left",
     fontFamily: FontFamily.pTSansRegular,
     display: "flex",
     color: Color.colorBlack,
-    width: 345,
+    right: 22,
     left: 22,
-    position: "absolute",
+    position: "relative",
+  },
+  mapTypo: {
+    fontSize: FontSize.size_5xl,
+    lineHeight: 30,
+    textAlign: "left",
+    fontFamily: FontFamily.pTSansRegular,
+    position: "relative",
   },
   map: {
-    top: 272,
-    textDecoration: "underline",
+    textDecorationLine: "underline",
     color: Color.colorCornflowerblue,
+    position: 'relative',
     left: 22,
+    marginTop: 10,
   },
   saveGroup: {
-    top: 1,
+    top: 3,
     left: 48,
-    width: 178,
+    width: "80%",
     height: 39,
     alignItems: "center",
     display: "flex",
     color: Color.colorBlack,
     fontSize: FontSize.size_5xl,
   },
+  saveGroupParent: {
+    top: 10,
+    width: "90%",
+    left: 22,
+  },
   plusIcon: {
     width: 40,
     height: 40,
     left: 0,
-    top: 0,
   },
-  saveGroupParent: {
-    top: 130,
-    width: 226,
-    left: 22,
-  },
-  freeWeeklyDads: {
-    top: 279,
+  descriptionText: {
+    top: 10,
     fontSize: FontSize.size_base,
     lineHeight: 28,
     height: 277,
@@ -134,14 +167,14 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.pTSansRegular,
     display: "flex",
     color: Color.colorBlack,
-    width: 345,
+    right: 22,
     left: 22,
-    position: "absolute",
+    position: "relative",
   },
   meetinginfo: {
     backgroundColor: Color.colorWhite,
     flex: 1,
-    height: 844,
+    height: "100%",
     overflow: "hidden",
     width: "100%",
   },

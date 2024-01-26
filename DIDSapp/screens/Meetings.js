@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ScrollView,
   StatusBar,
@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
+import { KeyboardAvoidingView } from 'react-native';
 import DropDownPicker from "react-native-dropdown-picker";
 import { Image } from "expo-image";
 import StatePlaceholder from "../components/StatePlaceholder";
@@ -22,7 +23,9 @@ import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
 const Meetings1 = () => {
   StatusBar.setBackgroundColor("#FBB042");
+  const navigation = useNavigation();
 
+  //day modal
   const [dayOpen, setDayOpen] = useState(false);
   const [dayValue, setDayValue] = useState();
   const [dayItems, setDayItems] = useState([
@@ -35,19 +38,6 @@ const Meetings1 = () => {
     { value: "Sat", label: "Sat" },
     { value: "Sun", label: "Sun" },
   ]);
-  const [stateOpen, setStateOpen] = useState(false);
-  const [stateValue, setStateValue] = useState("State");
-  const [stateItems, setStateItems] = useState([
-    { value: "VIC", label: "VIC" },
-    { value: "NSW", label: "NSW" },
-    { value: "ACT", label: "ACT" },
-    { value: "QLD", label: "QLD" },
-    { value: "WA", label: "WA" },
-    { value: "NT", label: "NT" },
-    { value: "SA", label: "SA" },
-  ]);
-  const navigation = useNavigation();
-
   const [isDayModalVisible, setDayModalVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);
 
@@ -60,17 +50,95 @@ const Meetings1 = () => {
     closeDayModal();
   };
 
+  //state modal
+  const [stateOpen, setStateOpen] = useState(false);
+  const [stateValue, setStateValue] = useState("State");
+  const [stateItems, setStateItems] = useState([
+    { value: "Any", label: "Any State" },
+    { value: "VIC", label: "VIC" },
+    { value: "NSW", label: "NSW" },
+    { value: "ACT", label: "ACT" },
+    { value: "QLD", label: "QLD" },
+    { value: "WA", label: "WA" },
+    { value: "NT", label: "NT" },
+    { value: "SA", label: "SA" },
+  ]);
+  
   const [isStateModalVisible, setStateModalVisible] = useState(false);
+  const [selectedState, setSelectedState] = useState(null);
 
   const openStateModal = () => setStateModalVisible(true);
   const closeStateModal = () => setStateModalVisible(false);
 
   const handleStateSelect = (item) => {
     setStateValue(item.value);
+    setSelectedState(item);
     closeStateModal();
   };
 
+
+
+  //dynamically grab groups
+  const [savedGroups, setSavedGroups] = useState([]);
+  const [allGroups, setAllGroups] = useState([]);
+
+// Add these state variables for filtered groups
+const [filteredSavedGroups, setFilteredSavedGroups] = useState([]);
+const [filteredAllGroups, setFilteredAllGroups] = useState([]);
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const data = require('../groups.json');
+      const groupsData = data.groups;
+      const savedGroupsData = data.savedGroups;
+
+      setSavedGroups(savedGroupsData);
+      setAllGroups(groupsData);
+      setFilteredSavedGroups(savedGroupsData); // Initialize filtered groups with all groups
+      setFilteredAllGroups(groupsData);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    }
+  };
+
+  fetchData();
+}, []);
+
+// search function
+const [searchInput, setSearchInput] = useState('');
+
+useEffect(() => {
+  // Your logic to filter groups based on searchInput
+  const filteredSavedGroups = savedGroups.filter(group =>
+    group.location.toLowerCase().includes(searchInput.toLowerCase())
+  );
+  setFilteredSavedGroups(filteredSavedGroups);
+
+  const filteredAllGroups = allGroups.filter(group =>
+    group.location.toLowerCase().includes(searchInput.toLowerCase())
+  );
+  setFilteredAllGroups(filteredAllGroups);
+}, [searchInput, savedGroups, allGroups]);
+
+//cancel buttom
+const resetState = () => {
+  setDayValue(null);
+  setSelectedDay(null);
+  setDayModalVisible(false);
+
+  setStateValue("State");
+  setSelectedState(null);
+  setStateModalVisible(false);
+
+  setSearchInput('');
+};
+
+
   return (
+    // <KeyboardAvoidingView
+    //   style={styles.container} // You can adjust the style as needed
+    //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ScrollView
       style={styles.meetings}
       showsVerticalScrollIndicator={false}
@@ -81,26 +149,33 @@ const Meetings1 = () => {
         <StatusBar barStyle="default" />
         <View style={styles.searchbarWrapper}>
           <View style={[styles.searchbar, styles.searchbarPosition]}>
-            <StatePlaceholder
-              showText
-              showDictation={false}
-              statePlaceholderPosition="absolute"
-              statePlaceholderTop={0}
-              statePlaceholderLeft={0}
-              statePlaceholderBackgroundColor="rgba(0, 0, 0, 0.1)"
-              searchGlyphFontFamily="PTSans-Regular"
-              placeholderLabelFontFamily="PTSans-Regular"
-              placeholderLabelColor="unset"
-              placeholderLabelTextAlign="unset"
-              placeholderLabelOverflow="unset"
-              placeholderLabelHeight="unset"
-              dictationFontFamily="PTSans-Regular"
+            
+             <TextInput
+              style={styles.stateInput} // Add a new style for TextInput
+              placeholder="Search Location or Day" // Set the placeholder text
+              value={searchInput}
+              onChangeText={(text) => {
+                setSearchInput(text);
+                console.log('Search Input:', text); // Add this line to log the search input
+              }}
+              
             />
+            
           </View>
+          <Image
+            style={[styles.searchIcon]}
+            contentFit="cover"
+            source={require("../assets/search.png")}
+      />
         </View>
         <View style={styles.frameWrapper}>
           <View style={styles.dayParent}>
             <View style={styles.day}>
+              {/* Down Arrow Icon */}
+              <Image
+                      style={styles.downArrowIcon}
+                      source={require("../assets/sort-left.png")}
+                    />
               <TouchableOpacity onPress={openDayModal}>
                 <Text style={styles.dayValue}>
                   {selectedDay ? selectedDay.label : "Select Day"}
@@ -136,9 +211,14 @@ const Meetings1 = () => {
             </View>
 
             <View style={[styles.dayParent, styles.day]}>
+              {/* Down Arrow Icon */}
+              <Image
+                      style={styles.downArrowIcon}
+                      source={require("../assets/sort-left.png")}
+                    />
               <TouchableOpacity onPress={openStateModal}>
                 <Text style={styles.dayValue}>
-                  {selectedDay ? selectedDay.label : "Select State"}
+                  {selectedState ? selectedState.label : "Select State"}
                 </Text>
               </TouchableOpacity>
               {/* State Modal */}
@@ -153,11 +233,7 @@ const Meetings1 = () => {
                     <View style={styles.overlay} />
                   </TouchableWithoutFeedback>
                   <View style={styles.modalContent}>
-                    {/* Down Arrow Icon */}
-                    <Image
-                      style={styles.downArrowIcon}
-                      source={require("../assets/sort-left.png")}
-                    />
+                    
                     <FlatList
                       data={stateItems}
                       renderItem={({ item }) => (
@@ -176,7 +252,7 @@ const Meetings1 = () => {
             </View>
             <Pressable
               style={[styles.cancel, styles.stateSpaceBlock]}
-              onPress={() => {}}
+              onPress={resetState}
             >
               <Image
                 style={styles.icon}
@@ -191,150 +267,69 @@ const Meetings1 = () => {
         <Text style={[styles.savedGroups1, styles.groupsTypo]}>
           Saved Groups
         </Text>
-        <Image
+        <View style={styles.frameParent}>
+        {filteredSavedGroups.map((group, index) => (
+            <Pressable
+              key={index}
+              style={styles.tuesdayParentLayout}
+              onPress={() => navigation.navigate("MeetingInfo")}
+            >
+              <Text style={[styles.locationText, styles.locationTextLayout]} numberOfLines={1}>
+                {group.location}
+              </Text>
+              <Text style={[styles.text, styles.textLayout1]} numberOfLines={1}>
+                {group.time}
+              </Text>
+              <Image
+                style={[styles.Icon, styles.iconLayout]}
+                contentFit="cover"
+                source={require("../assets/minus2.png")}
+              />
+            </Pressable>
+          ))}
+          <Image
           style={styles.savedGroupsChild}
           contentFit="cover"
           source={require("../assets/line-4.png")}
         />
-        <View style={styles.frameParent}>
-          <Pressable
-            style={styles.tuesdayParentLayout}
-            onPress={() => navigation.navigate("MeetingInfo")}
-          >
-            <Text
-              style={[styles.locationText, styles.locationTextLayout]}
-              numberOfLines={1}
-            >
-              Gosford, Thursday
-            </Text>
-            <Text style={[styles.text, styles.textLayout1]} numberOfLines={1}>
-              14/12 - 18:00
-            </Text>
-            <Image
-              style={[styles.Icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/minus2.png")}
-            />
-          </Pressable>
-          <Pressable
-            style={[styles.onlineTuesdayParent, styles.tuesdayParentLayout]}
-            onPress={() => navigation.navigate("MeetingInfo")}
-          >
-            <Text style={[styles.locationText, styles.locationTextLayout]}>
-              Online, Tuesday
-            </Text>
-            <Text style={[styles.text, styles.textLayout1]}>
-              19/12 - 18:50
-            </Text>
-            <Image
-              style={[styles.Icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/minus2.png")}
-            />
-          </Pressable>
         </View>
+        
       </View>
-      <View style={styles.allGroups}>
-        <Text style={[styles.allGroups1, styles.minusIcon1Position]}>
+      <View style={styles.savedGroups}>
+        <Text style={[styles.savedGroups1, styles.groupsTypo]}>
           All Groups
         </Text>
         <View style={styles.frameParent}>
-          <Pressable
-            style={styles.tuesdayParentLayout}
-            onPress={() => navigation.navigate("MeetingInfo")}
-          >
-            <Text style={[styles.locationText, styles.locationTextLayout]}>
-              Online, Tuesday
-            </Text>
-            <Text style={[styles.text, styles.textLayout1]}>19/12 - 18:50</Text>
-            <Image
-              style={[styles.Icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/plus31.png")}
-            />
-          </Pressable>
-          <Pressable
-            style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
-            onPress={() => navigation.navigate("MeetingInfo")}
-          >
-            <Text style={[styles.locationText, styles.locationTextLayout]}>
-              Bayswater, Tuesday
-            </Text>
-            <Text style={[styles.text, styles.textLayout1]}>19/12 - 18:50</Text>
-            <Image
-              style={[styles.Icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/plus31.png")}
-            />
-          </Pressable>
-          <Pressable
-            style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
-            onPress={() => navigation.navigate("MeetingInfo")}
-          >
-            <Text style={[styles.onlineFriday, styles.text4Text]}>
-              Online, Friday
-            </Text>
-            <Text style={[styles.text4, styles.text4Text]}>20/12 - 18:50</Text>
-            <Image
-              style={[styles.Icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/plus31.png")}
-            />
-          </Pressable>
-          <Pressable
-            style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
-            onPress={() => navigation.navigate("MeetingInfo")}
-          >
-            <Text style={[styles.locationText, styles.locationTextLayout]}>
-              Online, Friday
-            </Text>
-            <Text style={[styles.text, styles.textLayout1]}>20/12 - 18:50</Text>
-            <Image
-              style={[styles.Icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/plus31.png")}
-            />
-          </Pressable>
-          <Pressable
-            style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
-            onPress={() => navigation.navigate("MeetingInfo")}
-          >
-            <Text style={[styles.locationText, styles.locationTextLayout]}>
-              Online, Friday
-            </Text>
-            <Text style={[styles.text, styles.textLayout1]}>20/12 - 18:50</Text>
-            <Image
-              style={[styles.Icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/plus31.png")}
-            />
-          </Pressable>
-          <Pressable
-            style={[styles.bayswaterTuesdayParent, styles.tuesdayParentLayout]}
-            onPress={() => navigation.navigate("MeetingInfo")}
-          >
-            <Text style={[styles.locationText, styles.locationTextLayout]}>
-              Online, Friday
-            </Text>
-            <Text style={[styles.text, styles.textLayout1]}>20/12 - 18:50</Text>
-            <Image
-              style={[styles.Icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/plus31.png")}
-            />
-          </Pressable>
+          {filteredAllGroups.map((group, index) => (
+            <Pressable
+              key={index}
+              style={styles.tuesdayParentLayout}
+              onPress={() => navigation.navigate("MeetingInfo")}
+            >
+              <Text style={[styles.locationText, styles.locationTextLayout]}>
+                {group.location}
+              </Text>
+              <Text style={[styles.text, styles.textLayout1]}>
+                {group.time}
+              </Text>
+              <Image
+                style={[styles.Icon, styles.iconLayout]}
+                contentFit="cover"
+                source={require("../assets/plus31.png")}
+              />
+            </Pressable>
+          ))}
         </View>
       </View>
-      <ImageBackground
-        style={[styles.searchIcon, styles.searchbarPosition]}
-        resizeMode="cover"
-        source={require("../assets/search.png")}
-      />
     </ScrollView>
+    //</KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   dayValue: { //Day text
     marginTop: 9,
     marginLeft: 5, 
@@ -345,6 +340,16 @@ const styles = StyleSheet.create({
   },
   daydropDownContainer: {
     backgroundColor: "#fbb042",
+  },
+  stateInput: {
+    flex: 1,
+    height: 36,
+    paddingLeft: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 10,
+    color: 'white',
+    fontFamily: "PTSans-Regular",
+    color: "#fff",
   },
   stateValue: {
     color: "#fff",
@@ -359,16 +364,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  searchbarPosition: {
-    marginLeft: 17,
-    position: "relative",
-  },
+  
   stateSpaceBlock: {
     marginLeft: 35,
     height: 34,
   },
   groupsTypo: {
     textAlign: "left",
+    top: 10,
     color: Color.colorBlack,
     fontFamily: FontFamily.sourceSansPro,
     fontWeight: "600",
@@ -409,6 +412,7 @@ const styles = StyleSheet.create({
   tuesdayParentLayout: {
     height: 69,
     borderWidth: 2,
+    marginBottom: 15,
     borderColor: Color.colorLightgray,
     borderStyle: "solid",
     borderRadius: Border.br_3xs,
@@ -439,8 +443,12 @@ const styles = StyleSheet.create({
     marginLeft: 38,
     alignItems: "center",
   },
+  searchbarPosition: {
+    marginLeft: '13%',
+    position: "relative",
+  },
   searchbar: {
-    width: 360,
+    width: '80%',
     height: 36,
     top: 14,
   },
@@ -468,6 +476,9 @@ const styles = StyleSheet.create({
     marginLeft: 35,
   },
   icon: {
+    top: 7,
+    right: -10,
+    postion: 'relative',
     height: "100%",
     width: "100%",
   },
@@ -493,7 +504,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   savedGroups1: {
-    top: 2,
+    marginTop: 2,
     left: 0,
     color: Color.colorBlack,
     fontFamily: FontFamily.sourceSansPro,
@@ -501,14 +512,14 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     lineHeight: 22,
     fontSize: FontSize.title3Bold_size,
-    position: "absolute",
+    position: "relative",
   },
   savedGroupsChild: {
-    top: 217,
-    left: 148,
+    position: 'relative',
+    top: 10,
+    left: '40%',
     width: 50,
-    height: 0,
-    position: "absolute",
+    height: 2,
   },
   locationText: {
     width: '80%',
@@ -519,33 +530,25 @@ const styles = StyleSheet.create({
   },
   Icon: {
     marginLeft: '80%',
+    marginTop: 10,
     position: "relative",
-  },
-  onlineTuesday: {
-    top: 5,
-    left: 13,
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    position: "absolute",
   },
   onlineTuesdayParent: {
     marginTop: 18,
   },
   frameParent: {
     top: 34,
+    marginBottom: 10,
     left: 0,
-    position: "absolute",
+    position: "relative",
   },
   savedGroups: {
-    width: 346,
-    height: 208,
     zIndex: 1,
     marginTop: 17,
+    marginBottom: 10,
   },
   allGroups1: {
+    position: 'relative',
     left: 3,
     textAlign: "left",
     color: Color.colorBlack,
@@ -554,17 +557,6 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     lineHeight: 22,
     fontSize: FontSize.title3Bold_size,
-  },
-  onlineTuesday1: {
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    position: "absolute",
-    left: 14,
-    top: 4,
-    width: 293,
   },
   plusIcon: {
     left: 307,
@@ -596,12 +588,14 @@ const styles = StyleSheet.create({
     zIndex: 2,
     width: 345,
     marginTop: 17,
+    marginBottom: 30,
   },
   searchIcon: {
-    top: 10,
+    top: -15,
     width: 25,
     height: 25,
-    zIndex: 4,
+    marginLeft: 20,
+    
   },
   modalContainer: {
     flex: 1,
@@ -623,10 +617,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   downArrowIcon: {
-    width: 20,
-    height: 20,
-    alignSelf: 'center',
-    marginBottom: 10, // Adjust the margin as needed
+    width: 10,
+    height: 10,
+    position: "absolute",
+    right: 10, // Adjust the right property as needed
+    top: 15, // Adjust the top property as needed
+    zIndex: 1,
   },
   meetings: {
     backgroundColor: Color.colorWhite,

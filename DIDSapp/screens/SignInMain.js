@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import {
   ScrollView,
   Text,
@@ -16,6 +16,7 @@ import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 
 const SignInMain = () => {
   const navigation = useNavigation();
+  const [stateInput, setStateInput] = useState(""); // Add this state to hold the input value
 
   return (
     <ScrollView
@@ -24,22 +25,35 @@ const SignInMain = () => {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.signInMainScrollViewContent}
     >
-      <View style={styles.frameParent}>
-        <View style={styles.searchFieldWrapper}>
-          <TextInput
-            style={styles.searchInput}
-          />
+      
+     <View style={styles.searchbarWrapper}>
+          <View style={[styles.searchbar, styles.searchbarPosition]}>
+            
+             <TextInput
+              style={styles.stateInput} // Add a new style for TextInput
+              placeholder="Search Location or Day" // Set the placeholder text
+              value={stateInput}
+              onChangeText={(text) => setStateInput(text)} // Update the state on text change
+              
+            />
+            
+          </View>
+          <Image
+            style={[styles.searchIcon]}
+            contentFit="cover"
+            source={require("../assets/search.png")}
+      />
         </View>
-        <StatusBar barStyle="default" />
-      </View>
-      <View style={[styles.suggestedgroups, styles.savedgroupsLayout]}>
-        <Text style={styles.suggestedGroup}>Suggested Group</Text>
+        <View stlye={styles.contentWrapper}>
+      <View style={[styles.headerFormat, styles.groupsLayout]}>
+        <Text style={styles.headerText}>Suggested Group</Text>
+        <View style={styles.parentPosition}>
         <Pressable
-          style={[styles.parent, styles.parentLayout]}
+          style={[styles.parentLayout]}
           onPress={() => navigation.navigate("SignInConfidentiality")}
         >
-          <Text style={[styles.text, styles.textLayout]}>14/12 - 18:00</Text>
-          <Text style={[styles.gosfordThursday, styles.onlineTuesdayTypo]}>
+          <Text style={[styles.textTime, styles.textLayout]}>14/12 - 18:00</Text>
+          <Text style={[styles.locationText, styles.locationFormat]}>
             Gosford, Thursday
           </Text>
           <Image
@@ -48,34 +62,35 @@ const SignInMain = () => {
             source={require("../assets/circled-right.png")}
           />
         </Pressable>
+        </View>
       </View>
       <Image
         style={[styles.signinmainChild, styles.signinmainLayout]}
         contentFit="cover"
         source={require("../assets/line-3.png")}
       />
-      <View style={[styles.savedgroups, styles.savedgroupsLayout]}>
-        <Text style={styles.suggestedGroup}>Saved Groups</Text>
+      <View style={[styles.headerFormat, styles.groupsLayout]}>
+        <Text style={styles.headerText}>Saved Groups</Text>
         <View style={styles.parentPosition}>
           <Pressable
             style={styles.parentLayout}
             onPress={() => navigation.navigate("SignInConfidentiality")}
           >
-            <Text style={[styles.gosfordThursday1, styles.textPosition]}>
+            <Text style={[styles.locationText, styles.locationFormat]}>
               Gosford, Thursday
             </Text>
-            <Text style={[styles.text1, styles.textLayout]}>14/12 - 18:00</Text>
+            <Text style={[styles.textTime, styles.textLayout]}>14/12 - 18:00</Text>
             <Image
               style={[styles.circledRightIcon, styles.circledIconLayout]}
               contentFit="cover"
               source={require("../assets/circled-right.png")}
             />
           </Pressable>
-          <Pressable style={[styles.onlineTuesdayParent, styles.parentLayout]}>
-            <Text style={[styles.onlineTuesday, styles.onlineTuesdayTypo]}>
+          <Pressable style={[ styles.parentLayout]}>
+            <Text style={[styles.locationText, styles.locationFormat]}>
               Online, Tuesday
             </Text>
-            <Text style={[styles.text2, styles.textPosition]}>
+            <Text style={[styles.textTime, styles.textLayout]}>
               17/12 - 18:30
             </Text>
             <Image
@@ -87,49 +102,56 @@ const SignInMain = () => {
         </View>
       </View>
       <Image
-        style={[styles.signinmainItem, styles.signinmainLayout]}
+        style={[styles.signinmainChild, styles.signinmainLayout]}
         contentFit="cover"
         source={require("../assets/line-3.png")}
       />
-      <View style={styles.allgroupstoday}>
-        <Text style={styles.suggestedGroup}>All Groups Today</Text>
-        <View style={styles.frameContainer}>
-          <Pressable style={styles.parentLayout}>
-            <Text style={[styles.onlineThursday, styles.thursdayTypo]}>
-              Online, Thursday
-            </Text>
-            <Text style={[styles.text3, styles.textPosition]}>
-              14/12 - 19:20
-            </Text>
-            <Image
-              style={[styles.circledRightIcon3, styles.circledIconLayout]}
-              contentFit="cover"
-              source={require("../assets/circled-right21.png")}
-            />
-          </Pressable>
+      <View style={[styles.headerFormat, styles.groupsLayout]}>
+      <Text style={styles.headerText}>All Groups</Text>
+        <View style={styles.parentPosition}>
           <Pressable
-            style={[styles.onlineThursdayGroup, styles.parentLayout]}
+            style={styles.parentLayout}
             onPress={() => navigation.navigate("SignInConfidentiality")}
           >
-            <Text style={[styles.onlineThursday, styles.thursdayTypo]}>
-              Online, Thursday
+            <Text style={[styles.locationText, styles.locationFormat]}>
+              Gosford, Thursday
             </Text>
-            <Text style={[styles.text3, styles.textPosition]}>
-              14/12 - 19:20
+            <Text style={[styles.textTime, styles.textLayout]}>14/12 - 18:00</Text>
+            <Image
+              style={[styles.circledRightIcon, styles.circledIconLayout]}
+              contentFit="cover"
+              source={require("../assets/circled-right.png")}
+            />
+          </Pressable>
+          <Pressable style={[styles.parentLayout]}>
+            <Text style={[styles.locationText, styles.locationFormat]}>
+              Online, Tuesday
+            </Text>
+            <Text style={[styles.textTime, styles.textLayout]}>
+              17/12 - 18:30
             </Text>
             <Image
-              style={[styles.circledRightIcon3, styles.circledIconLayout]}
+              style={[styles.circledRightIcon, styles.circledIconLayout]}
               contentFit="cover"
-              source={require("../assets/circled-right21.png")}
+              source={require("../assets/circled-right.png")}
+            />
+          </Pressable>
+          <Pressable style={[styles.parentLayout]}>
+            <Text style={[styles.locationText, styles.locationFormat]}>
+              Online, Tuesday
+            </Text>
+            <Text style={[styles.textTime, styles.textLayout]}>
+              17/12 - 18:30
+            </Text>
+            <Image
+              style={[styles.circledRightIcon, styles.circledIconLayout]}
+              contentFit="cover"
+              source={require("../assets/circled-right.png")}
             />
           </Pressable>
         </View>
       </View>
-      <Image
-        style={styles.searchIcon}
-        contentFit="cover"
-        source={require("../assets/search.png")}
-      />
+      </View>
     </ScrollView>
   );
 };
@@ -140,16 +162,45 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  searchInput: {
-    flex: 1,
-    height: "100%",
-    color: Color.colorBlack,
-    fontSize: FontSize.size_l,
-    fontFamily: FontFamily.pTSansCaption,
+  contentWrapper: {
+    left: 22,
+    right: 22,
   },
-  savedgroupsLayout: {
+  searchbarPosition: {
+    marginLeft: '13%',
+    position: "relative",
+  },
+  searchbar: {
+    width: '80%',
+    height: 36,
+    top: 14,
+  },
+  searchbarWrapper: {
+    height: 70,
+    width: '100%',
+    zIndex: 2,
+    backgroundColor: Color.colorGoldenrod_100,
+    position: 'relative'
+  },
+  stateInput: {
+    flex: 1,
+    height: 36,
+    paddingLeft: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 10,
+    color: 'white',
+    fontFamily: "PTSans-Regular",
+    color: "#fff",
+  },
+  searchIcon: {
+    top: -15,
+    width: 25,
+    height: 25,
+    marginLeft: 20,
+  },
+  groupsLayout: {
     width: 346,
-    marginTop: 27,
+    marginTop: 10,
   },
   parentLayout: {
     height: 69,
@@ -157,7 +208,9 @@ const styles = StyleSheet.create({
     borderColor: Color.colorLightgray,
     borderStyle: "solid",
     borderRadius: Border.br_3xs,
-    width: 345,
+    width: "100%",
+    marginTop: 15,
+    position: 'relative',
   },
   textLayout: {
     height: 31,
@@ -165,9 +218,10 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.pTSansCaption,
     fontSize: FontSize.size_lgi,
   },
-  onlineTuesdayTypo: {
+  locationFormat: {
     height: 30,
     width: 264,
+    top: 5,
     alignItems: "center",
     display: "flex",
     left: 13,
@@ -188,45 +242,12 @@ const styles = StyleSheet.create({
   signinmainLayout: {
     maxHeight: "100%",
     width: 50,
-    marginTop: 27,
+    left: "20%",
+    marginTop: 10,
+    marginBottom: 10,
+    height: 2,
   },
-  textPosition: {
-    left: 14,
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    position: "absolute",
-  },
-  thursdayTypo: {
-    top: 4,
-    height: 30,
-    fontFamily: FontFamily.pTSansCaptionBold,
-    fontWeight: "700",
-    fontSize: FontSize.size_3xl,
-  },
-  signIn1Typo: {
-    textAlign: "center",
-    fontSize: FontSize.size_xs,
-    fontFamily: FontFamily.pTSansCaption,
-    lineHeight: 22,
-  },
-  signInSpaceBlock: {
-    marginLeft: 38,
-    alignItems: "center",
-  },
-  searchFieldWrapper: {
-    height: 70,
-    backgroundColor: Color.colorGoldenrod_100,
-    width: '100%',
-  },
-  frameParent: {
-    height: 105,
-    zIndex: 0,
-    width: '100%',
-  },
-  suggestedGroup: {
+  headerText: {
     textAlign: "left",
     color: Color.colorBlack,
     fontFamily: FontFamily.pTSansCaptionBold,
@@ -235,10 +256,10 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     top: 0,
     left: 0,
-    position: "absolute",
+    position: "relative",
   },
-  text: {
-    top: 29,
+  textTime: {
+    top: 33,
     alignItems: "center",
     display: "flex",
     left: 13,
@@ -250,9 +271,6 @@ const styles = StyleSheet.create({
     color: Color.colorBlack,
     lineHeight: 22,
     position: "absolute",
-  },
-  gosfordThursday: {
-    top: 2,
   },
   circledRightIcon: {
     left: 277,
@@ -260,108 +278,20 @@ const styles = StyleSheet.create({
   parent: {
     left: 1,
     top: 34,
-    position: "absolute",
+    position: "relative",
   },
-  suggestedgroups: {
-    height: 121,
+  headerFormat: {
+    position:"relative",
     zIndex: 1,
-    marginTop: 27,
   },
   signinmainChild: {
     zIndex: 2,
   },
-  gosfordThursday1: {
-    width: 263,
-    top: 4,
-    height: 30,
-    fontFamily: FontFamily.pTSansCaptionBold,
-    fontWeight: "700",
-    fontSize: FontSize.size_3xl,
-  },
-  text1: {
-    alignItems: "center",
-    display: "flex",
-    left: 13,
-    height: 31,
-    width: 220,
-    fontFamily: FontFamily.pTSansCaption,
-    fontSize: FontSize.size_lgi,
-    textAlign: "left",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    position: "absolute",
-    top: 34,
-  },
-  onlineTuesday: {
-    top: 5,
-  },
-  text2: {
-    height: 31,
-    width: 220,
-    fontFamily: FontFamily.pTSansCaption,
-    fontSize: FontSize.size_lgi,
-    left: 14,
-    top: 34,
-  },
-  onlineTuesdayParent: {
-    marginTop: 18,
-  },
   parentPosition: {
-    left: 1,
-    top: 34,
-    position: "absolute",
-  },
-  savedgroups: {
-    height: 208,
-    zIndex: 3,
-    marginTop: 27,
-  },
-  signinmainItem: {
-    zIndex: 4,
-  },
-  onlineThursday: {
-    width: 264,
-    top: 4,
-    alignItems: "center",
-    display: "flex",
-    left: 13,
-    textAlign: "left",
-    color: Color.colorBlack,
-    lineHeight: 22,
-    position: "absolute",
-  },
-  text3: {
-    top: 33,
-    height: 31,
-    width: 220,
-    fontFamily: FontFamily.pTSansCaption,
-    fontSize: FontSize.size_lgi,
-    left: 14,
-  },
-  circledRightIcon3: {
-    left: 276,
-  },
-  onlineThursdayGroup: {
-    marginTop: 12,
-  },
-  frameContainer: {
-    top: 34,
     left: 0,
-    position: "absolute",
-  },
-  allgroupstoday: {
-    height: 184,
-    zIndex: 5,
-    width: 345,
-    marginTop: 27,
-  },
-  searchIcon: {
-    top: 55,
-    left: 17,
-    width: 25,
-    height: 25,
-    zIndex: 7,
-    position: "absolute",
+    top: 0,
+    position: "relative",
+    marginBottom: 10,
   },
   signinmain: {
     backgroundColor: Color.colorWhite,

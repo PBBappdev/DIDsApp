@@ -40,13 +40,13 @@ import MeetingInfo from "./screens/MeetingInfo";
 import Meetings1 from "./screens/Meetings";
 import Login from "./screens/Login";
 import LoadingScreen from "./screens/LoadingScreen";
-import FrameComponent1 from "./components/Frame159";
+import FrameComponent1 from "./components/AccountHeader";
 import Account from "./screens/Account";
-import FrameComponent4 from "./components/Frame160";
+import FrameComponent4 from "./components/NotificationSetHead";
 import Notifications from "./screens/Notifications";
-import FrameComponent2 from "./components/Frame161";
+import FrameComponent2 from "./components/RoleChangeSetHeader";
 import RequestRoleChange from "./screens/RequestRoleChange";
-// import FrameComponent3 from "./components/FrameComponent3";
+import FrameComponent3 from "./components/ChangePasswordHeader";
 import ChangePassword from "./screens/ChangePassword";
 import FrameComponent5 from "./components/Frame173";
 import FrameComponent6 from "./components/Frame130";
@@ -63,6 +63,20 @@ import { IconRegistry, ApplicationProvider } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
 import { SwitchProvider } from './components/SwitchContext';
 import { TextInputProvider } from './components/TextInputContext';
+
+
+import { AppRegistry } from 'react-native';
+import { name as appName } from './app.json';
+
+//firebase
+import { initializeApp } from '@react-native-firebase/app';
+import firebaseConfig from './firebase'; // Adjust the path based on your project structure
+import './firebase'; // Import the Firebase configuration
+// Initialize Firebase
+initializeApp(firebaseConfig);
+
+
+
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -160,6 +174,7 @@ function BottomTabsRoot({ navigation }) {
 }
 
 const App = () => {
+  
   const [hideSplashScreen, setHideSplashScreen] = React.useState(false);
 
   const [fontsLoaded, error] = useFonts({
@@ -383,4 +398,8 @@ const App = () => {
     </>
   );
 };
+
+AppRegistry.registerComponent(appName, () => App);
+
 export default App;
+

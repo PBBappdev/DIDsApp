@@ -37,13 +37,15 @@ const FrameComponent = ({ style }) => {
 const styles = StyleSheet.create({
   parent: {
     backgroundColor: Color.colorGoldenrod_100,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   textFlexBox: {
     alignItems: "center",
     display: "flex",
     textAlign: "left",
     color: Color.colorBlack,
-    lineHeight: 22,
+    lineHeight: 33,
     left: 79,
     position: "absolute",
   },
@@ -74,7 +76,7 @@ const styles = StyleSheet.create({
     height: 30,
   },
   view: {
-    width: 390,
+    width: "100%",
     height: 81,
   },
 });

@@ -16,44 +16,44 @@ const InfoScreen = () => {
       <StatusBar barStyle="default" />
       <View style={[styles.frameParent, styles.parentPosition]}>
         <Pressable
-          style={[styles.visitOurWebsiteWrapper, styles.wrapperLayout]}
+          style={[styles.orangeWrapper, styles.wrapperSpaceBlock]}
           onPress={() => Linking.openURL("https://parentsbeyondbreakup.com/")}
         >
-          <Text style={styles.visitOurWebsite}>Visit Our Website</Text>
+          <Text style={styles.orangeText}>Visit Our Website</Text>
         </Pressable>
         <Pressable
-          style={[styles.supportUsVolunteerWrapper, styles.wrapperSpaceBlock]}
+          style={[styles.redWrapper, styles.wrapperSpaceBlock]}
           onPress={() =>
             Linking.openURL("https://parentsbeyondbreakup.com/volunteer/")
           }
         >
-          <Text style={[styles.supportUs, styles.faqsTypo]}>
+          <Text style={[styles.RedOutlineProps]}>
             Support Us / Volunteer
           </Text>
         </Pressable>
         <Pressable
-          style={[styles.donateWrapper, styles.wrapperSpaceBlock]}
+          style={[styles.orangeWrapper, styles.wrapperSpaceBlock]}
           onPress={() =>
             Linking.openURL("https://parentsbeyondbreakup.com/donate/")
           }
         >
-          <Text style={styles.visitOurWebsite}>Donate</Text>
+          <Text style={styles.orangeText}>Donate</Text>
         </Pressable>
         <Pressable
-          style={[styles.supportUsVolunteerWrapper, styles.wrapperSpaceBlock]}
+          style={[styles.redWrapper, styles.wrapperSpaceBlock]}
           onPress={() =>
             Linking.openURL("https://parentsbeyondbreakup.com/faqs/")
           }
         >
-          <Text style={[styles.faqs, styles.faqsTypo]}>FAQ’s</Text>
+          <Text style={[styles.RedOutlineProps]}>FAQ’s</Text>
         </Pressable>
         <Pressable
-          style={[styles.donateWrapper, styles.wrapperSpaceBlock]}
+          style={[styles.orangeWrapper, styles.wrapperSpaceBlock]}
           onPress={() =>
             Linking.openURL("https://parentsbeyondbreakup.com/news/")
           }
         >
-          <Text style={styles.visitOurWebsite}>News</Text>
+          <Text style={styles.orangeText}>News</Text>
         </Pressable>
       </View>
     </View>
@@ -65,18 +65,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     alignItems: "center",
   },
-  wrapperLayout: {
-    height: 70,
-    width: 342,
-    backgroundColor: Color.colorGoldenrod_100,
-  },
   wrapperSpaceBlock: {
     marginTop: 20,
     borderRadius: Border.br_3xs,
   },
-  faqsTypo: {
-    width: 220,
-    left: 63,
+  RedOutlineProps: {
+    width: '80%',
+    top: 23,
+    left: 35,
     justifyContent: "center",
     display: "flex",
     textAlign: "center",
@@ -88,21 +84,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "absolute",
   },
-  infoTypo: {
-    fontFamily: FontFamily.pTSansCaption,
-    fontSize: FontSize.size_xs,
-    textAlign: "center",
-    lineHeight: 22,
-  },
-  signInSpaceBlock: {
-    marginLeft: 38,
-    alignItems: "center",
-  },
-  visitOurWebsite: {
-    top: 22,
-    left: 78,
-    width: 185,
-    height: 26,
+  orangeText: {
+    width: '80%',
+    top: 23,
+    left: 35,
     justifyContent: "center",
     display: "flex",
     textAlign: "center",
@@ -114,31 +99,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "absolute",
   },
-  visitOurWebsiteWrapper: {
-    borderRadius: Border.br_3xs,
-    width: 342,
-  },
-  supportUs: {
-    top: 19,
-    height: 31,
-  },
-  supportUsVolunteerWrapper: {
+  redWrapper: {
     borderStyle: "solid",
     borderColor: Color.colorTomato_100,
     borderWidth: 2,
     width: 345,
     height: 69,
   },
-  donateWrapper: {
+  orangeWrapper: {
     height: 70,
-    width: 342,
+    width: "100%",
     backgroundColor: Color.colorGoldenrod_100,
   },
-  faqs: {
-    top: 23,
-  },
   frameParent: {
-    top: 76,
+    top: 50,
     left: 22,
     alignItems: "center",
   },
@@ -146,7 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorWhite,
     flex: 1,
     width: "100%",
-    height: 844,
+    height: "100%",
     overflow: "hidden",
   },
 });

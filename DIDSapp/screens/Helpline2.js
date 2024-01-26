@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorGoldenrod_100,
   },
   liveChat: {
-    top: 20,
+    top: 24,
     left: 123,
     display: "flex",
     width: 100,
