@@ -12,6 +12,7 @@ import {
   Modal,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  RefreshControl,
 } from "react-native";
 import { KeyboardAvoidingView } from 'react-native';
 import DropDownPicker from "react-native-dropdown-picker";
@@ -19,12 +20,35 @@ import { Image } from "expo-image";
 import StatePlaceholder from "../components/StatePlaceholder";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { firebase } from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
+import { auth, db } from '../firebase'; // Import the auth and firestore obje
+
 
 
 const Meetings1 = () => {
   StatusBar.setBackgroundColor("#FBB042");
   const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
 
+  const onRefresh = async () => {
+     try {
+      setRefreshing(true);
+
+      // Assuming you have a "meetings" collection in Firestore
+      const meetingsSnapshot = await db.collection('Meetings').get();
+
+      // Extract data from the snapshot
+      const meetingsData = meetingsSnapshot.docs.map(doc => doc.data());
+
+      // Set the meetings state with the fetched data
+      setMeetings(meetingsData);
+    } catch (error) {
+      console.error('Error fetching meetings:', error.message);
+    } finally {
+      setRefreshing(false);
+    }
+  };
   //day modal
   const [dayOpen, setDayOpen] = useState(false);
   const [dayValue, setDayValue] = useState();
@@ -75,6 +99,30 @@ const Meetings1 = () => {
     setSelectedState(item);
     closeStateModal();
   };
+
+
+  const [meetings, setMeetings] = useState([]);
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      try {
+        // Assuming you have a "meetings" collection in Firestore
+        const meetingsSnapshot = await db.collection('Meetings').get();
+  
+        // Extract data from the snapshot
+        const meetingsData = meetingsSnapshot.docs.map(doc => doc.data());
+  
+        // Set the meetings state with the fetched data
+        setMeetings(meetingsData);
+      } catch (error) {
+        console.error('Error fetching meetings:', error.message);
+      }
+    };
+  
+    fetchMeetings();
+  }, []);
+  
+
+
 
 
 
@@ -144,6 +192,9 @@ const resetState = () => {
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.meetingsScrollViewContent}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       <View style={styles.statusBarParent}>
         <StatusBar barStyle="default" />

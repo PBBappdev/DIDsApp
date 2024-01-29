@@ -12,6 +12,10 @@ import { TextInput as RNPTextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import { useTextInputContext } from '../components/TextInputContext';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase'; // Import the auth and firestore object
+import  {collection,addDoc} from 'firebase/firestore'
 
 
 const CreateAccount = () => {
@@ -22,6 +26,34 @@ const CreateAccount = () => {
   const handleInputChange = (name, value) => {
     setTextInput(name, value);
   };
+
+ //sending user data to firebase
+ const createNewUser = async () => {
+  try {
+    // const userCredential = await createUserWithEmailAndPassword(
+    //   auth,
+    //   textInputs.emailAddress,
+    //   textInputs.password
+    // );
+
+    // const user = userCredential.user;
+
+    // const userDocRef = doc(db, 'Users', user.uid);
+    // await addDoc(userDocRef, {
+    //   firstName: textInputs.firstName,
+    //   lastName: textInputs.lastName,
+    //   // Add other fields as needed
+    // });
+    await addDoc( collection(db, "Your_Collections_Name_in_firebase"), {
+      dataFromInput : dataState
+    })
+    console.log('User created successfully:', user);
+    //navigation.navigate('CreateProfile');
+  } catch (error) {
+    console.error('Error creating user:', error.message);
+  }
+};
+
 
   return (
     <ScrollView
@@ -122,7 +154,7 @@ const CreateAccount = () => {
         <TouchableOpacity
           style={[styles.continueWrapper, styles.frameLayout1]}
           activeOpacity={0.8}
-          onPress={() => navigation.navigate("CreateProfile")}
+          onPress={() => createNewUser()}
         >
           <Text style={styles.continue}>Continue</Text>
         </TouchableOpacity>
