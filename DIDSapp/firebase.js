@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+//import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -9,15 +9,16 @@ import { getAnalytics } from "firebase/analytics";
 const firebaseConfig = {
   apiKey: "AIzaSyDez_cbWSOcKxfdnFST1iQ4CAO07SkySos",
   authDomain: "dids-app.firebaseapp.com",
+  databaseURL: "https://dids-app-default-rtdb.firebaseio.com",
   projectId: "dids-app",
   storageBucket: "dids-app.appspot.com",
   messagingSenderId: "340993183914",
-  appId: "1:340993183914:web:7041f7dcfb177e661900d3",
-  measurementId: "G-2PYNWMN9HM"
+  appId: "1:340993183914:web:41a6d83633037f2e1900d3",
+  measurementId: "G-2067WJ4MT5"
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const firebaseApp = initializeApp(firebaseConfig);
+//const analytics = getAnalytics(firebaseApp);
 
-export default firebaseConfig;
+export {firebaseApp};
