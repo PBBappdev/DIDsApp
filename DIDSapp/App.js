@@ -63,17 +63,15 @@ import { IconRegistry, ApplicationProvider } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
 import { SwitchProvider } from './components/SwitchContext';
 import { TextInputProvider } from './components/TextInputContext';
-
-
 import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 
 //firebase
-import { initializeApp } from '@react-native-firebase/app';
-import firebaseConfig from './firebase'; // Adjust the path based on your project structure
-import './firebase'; // Import the Firebase configuration
-// Initialize Firebase
-initializeApp(firebaseConfig);
+// import { initializeApp } from '@react-native-firebase/app';
+// import firebaseConfig from './firebase'; // Adjust the path based on your project structure
+// import './firebase'; // Import the Firebase configuration
+// // Initialize Firebase
+// initializeApp(firebaseConfig);
 
 
 

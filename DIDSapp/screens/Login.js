@@ -1,13 +1,28 @@
-import * as React from "react";
-import { ScrollView, Text, StyleSheet, View, Pressable } from "react-native";
+import React, { createContext, useContext, useState } from "react";
+import { ScrollView, Text, StyleSheet, View, Pressable, Alert  } from "react-native";
 import { Image } from "expo-image";
 import { TextInput as RNPTextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { FontFamily, Border, Color, FontSize } from "../GlobalStyles";
+import firebaseApp  from "../firebase";
+import { getAuth, createUserWithEmailAndPassword} from "firebase/auth";
 
 const Login = () => {
   const navigation = useNavigation();
 
+  const [email, updateEmail] = useState("");
+  const [password, updatePassword] = useState("");
+  const auth = getAuth(firebaseApp);
+
+  const signin = async () => {
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password)
+      console.log(user)
+    } catch ({message}) {
+      alert(message)
+    }
+  }
+  
   return (
     <ScrollView
       style={styles.login}
@@ -33,6 +48,8 @@ const Login = () => {
           <RNPTextInput
             style={styles.frameLayout}
             label="Email Address"
+            value={email}
+            onChangeText={updateEmail}
             mode="outlined"
             placeholderTextColor="#fff"
             activeOutlineColor="#fbb042"
@@ -40,22 +57,27 @@ const Login = () => {
               fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
               colors: { text: "#c4ced3" },
             }}
+            
           />
           <RNPTextInput
             style={[styles.frameItem, styles.frameLayout]}
             label="Password"
             mode="outlined"
+            value={password}
+            onChangeText={updatePassword}
             placeholderTextColor="#c4ced3"
             activeOutlineColor="#fbb042"
             theme={{
               fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
               colors: { text: "#c4ced3" },
             }}
+            secureTextEntry
           />
         </View>
         <Pressable
           style={styles.forgotPassword}
           onPress={() => navigation.navigate("ForgotPassword")}
+          
         >
           <Text style={[styles.forgotPassword1, styles.logInFlexBox]}>
             Forgot Password?
@@ -64,9 +86,11 @@ const Login = () => {
       </View>
       <Pressable
         style={styles.logInWrapper}
-        onPress={() =>
-          navigation.navigate("BottomTabsRoot", { screen: "Meetings1" })
-        }
+        onPress={signin}
+        // onPress={() =>
+        //   
+        //   //navigation.navigate("BottomTabsRoot", { screen: "Meetings1" })
+        // }
       >
         <Text style={[styles.logIn, styles.logInFlexBox]}>Log in</Text>
       </Pressable>
