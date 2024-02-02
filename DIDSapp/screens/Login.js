@@ -5,7 +5,7 @@ import { TextInput as RNPTextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { FontFamily, Border, Color, FontSize } from "../GlobalStyles";
 import firebaseApp  from "../firebase";
-import { getAuth, createUserWithEmailAndPassword} from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword} from "firebase/auth";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -16,10 +16,12 @@ const Login = () => {
 
   const signin = async () => {
     try {
-      const { user } = await createUserWithEmailAndPassword(auth, email, password)
+      const { user } = await signInWithEmailAndPassword(auth, email, password)
       console.log(user)
+      navigation.navigate("BottomTabsRoot", { screen: "Meetings1" })
     } catch ({message}) {
-      alert(message)
+      console.log(message)
+      alert("Incorrect Login Please Try Again")
     }
   }
   

@@ -12,12 +12,44 @@ import { TextInput as RNPTextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import { useTextInputContext } from '../components/TextInputContext';
+import firebaseApp  from "../firebase";
+import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
+//import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const CreateAccount = () => {
   const navigation = useNavigation();
 
   const { textInputs, setTextInput } = useTextInputContext();
+  const auth = getAuth(firebaseApp);
+  // const auth = initializeAuth(app, {
+  //   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+  // });
+
+  const signup = async () => {
+    // Check if passwords match
+    if (textInputs.password !== textInputs.confirmPassword) {
+      alert("Passwords do not match. Please make sure both passwords are the same.");
+      return;
+    }
+    // Check if password meets security requirements
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
+
+    if (!passwordRegex.test(textInputs.password)) {
+      alert("Password must be at least 8 characters long and include at least one letter and one number.");
+      return;
+    }
+
+    //create user account
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, textInputs.emailAddress, textInputs.password)
+      console.log(user)
+      navigation.navigate("CreateProfile")
+    } catch ({message}) {
+      alert("Cannot create account. Please check login details")
+      console.log(user)
+    }
+  }
 
   const handleInputChange = (name, value) => {
     setTextInput(name, value);
@@ -63,7 +95,7 @@ const CreateAccount = () => {
         />
         <RNPTextInput
           style={[styles.frameItem, styles.frameLayout]}
-          label="Last Name*"
+          label="Last Name"
           placeholder="Last Name"
           mode="outlined"
           placeholderTextColor="#c4ced3"
@@ -123,6 +155,7 @@ const CreateAccount = () => {
           style={[styles.continueWrapper, styles.frameLayout1]}
           activeOpacity={0.8}
           onPress={() => navigation.navigate("CreateProfile")}
+          // onPress={signup} //uncomment for testing login
         >
           <Text style={styles.continue}>Continue</Text>
         </TouchableOpacity>
