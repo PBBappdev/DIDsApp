@@ -89,7 +89,7 @@ const CreateAccount = () => {
           onChangeText={(value) => handleInputChange('firstName', value)}
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -103,7 +103,7 @@ const CreateAccount = () => {
           onChangeText={(value) => handleInputChange('lastName', value)}
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -117,7 +117,7 @@ const CreateAccount = () => {
           onChangeText={(value) => handleInputChange('emailAddress', value)}
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -131,7 +131,7 @@ const CreateAccount = () => {
           onChangeText={(value) => handleInputChange('password', value)}
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -145,7 +145,7 @@ const CreateAccount = () => {
           onChangeText={(value) => handleInputChange('confirmPassword', value)}
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   createAccount: {
     marginTop: "5%",
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     height: 80,
     fontSize: FontSize.size_13xl,
     width: "85%",
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     textAlign: "center",
     color: Color.colorBlack,
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     lineHeight: 22,
     position: "relative",
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   mandatoryInformation: {
-    fontFamily: FontFamily.pTSansRegular,
+    fontFamily: FontFamily.PTSansRegular,
     alignItems: "center",
     display: "flex",
     textAlign: "left",

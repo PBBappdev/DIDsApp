@@ -1,23 +1,21 @@
 import React, { useState } from "react";
 import { ScrollView, Text, StyleSheet, View, Pressable } from "react-native";
 import { Image } from "expo-image";
-import { Checkbox } from "react-native-paper";
+//import { Checkbox } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontSize, FontFamily, Border } from "../GlobalStyles";
+//import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { RadioGroup, Radio } from "@ui-kitten/components";
+
 
 const RoleSelect = () => {
   const [selectedRole, setSelectedRole] = useState(""); // Updated state
 
   const navigation = useNavigation();
 
-  const handleCheckboxPress = (role) => {
-    if (selectedRole === role) {
-      // If the selected role is the same, unselect it
-      setSelectedRole("");
-    } else {
-      // Otherwise, select the new role
-      setSelectedRole(role);
-    }
+  
+  const handleRadioPress = (role) => {
+    setSelectedRole(role);
   };
 
 
@@ -43,44 +41,31 @@ const RoleSelect = () => {
         </Pressable>
         <Text style={[styles.role, styles.roleFlexBox]}>Role</Text>
       </View>
-      <View style={styles.checkboxcheckedCheckboxAndParent}>
-        <View style={styles.checkboxFlexBox}>
-          <View>
-            <Checkbox
-              status={selectedRole === "Client" ? "checked" : "unchecked"}
-              onPress={() => handleCheckboxPress("Client")}
-              color="#fbb042"
-            />
-          </View>
-          <Text style={[styles.label, styles.labelTypo]}>Client</Text>
-        </View>
-        <View
-          style={[styles.checkboxdefaultCheckboxAnd, styles.checkboxFlexBox]}
+      <View style={styles.radioButtonsContainer}>
+      <RadioGroup
+          style={[styles.parent, styles.parentSpaceBlock]}
+          selectedIndex={selectedRole === "Client" ? 0 : null}
+          onChange={(index) => handleRadioPress("Client")}
         >
-          <View>
-            <Checkbox
-               status={selectedRole === "Volunteer" ? "checked" : "unchecked"}
-               onPress={() => handleCheckboxPress("Volunteer")}
-               color="#fbb042"
-            />
-          </View>
-          <Text style={[styles.label1, styles.labelTypo]}>
-            <Text style={styles.volunteer}>Volunteer</Text>
-            <Text style={styles.text}>*</Text>
-          </Text>
-        </View>
-        <View
-          style={[styles.checkboxdefaultCheckboxAnd, styles.checkboxFlexBox]}
+          <Radio status='warning' style={styles.radioText}>Client</Radio>
+        </RadioGroup>
+        <RadioGroup
+          style={[styles.parent, styles.parentSpaceBlock]}
+          selectedIndex={selectedRole === "Volunteer" ? 0 : null}
+          onChange={(index) => handleRadioPress("Volunteer")}
+          
         >
-          <View>
-            <Checkbox
-               status={selectedRole === "Staff" ? "checked" : "unchecked"}
-               onPress={() => handleCheckboxPress("Staff")}
-               color="#fbb042"
-            />
-          </View>
-          <Text style={[styles.label, styles.labelTypo]}>Staff*</Text>
-        </View>
+          <Radio status='warning' style={styles.radioText}>Volunteer</Radio>
+        </RadioGroup>
+        <RadioGroup
+          style={[styles.parent, styles.parentSpaceBlock]}
+          selectedIndex={selectedRole === "Staff" ? 0 : null}
+          onChange={(index) => handleRadioPress("Staff")}
+        >
+         <Radio status='warning'>
+          <Text style={styles.radioText}>Staff</Text>
+          </Radio>
+        </RadioGroup>
       </View>
       <Text style={[styles.approvalRequiredForContainer, styles.roleFlexBox]}>
         <Text style={styles.approvalRequiredForContainer1}>
@@ -114,27 +99,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  timePosition: {
-    height: 54,
-    top: "50%",
-    width: "43.18%",
-    marginTop: -24,
-    position: "absolute",
+  radioButtonsContainer: {
+    width: "85%",
+    marginTop: 54,
   },
-  time1FlexBox: {
-    textAlign: "center",
-    lineHeight: 22,
-    color: Color.colorBlack,
-    position: "absolute",
+  radioButton: {
+    marginVertical: 10,
   },
-  borderPosition: {
-    left: "50%",
-    position: "absolute",
+  radioText: {
+    fontSize: 30,
+  },  
+  parentSpaceBlock: {
+    marginTop: 22,
+    width: 334,
   },
-  iconPosition: {
-    maxHeight: "100%",
-    left: "50%",
-    position: "absolute",
+  parent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   roleFlexBox: {
     alignItems: "center",
@@ -142,12 +124,6 @@ const styles = StyleSheet.create({
     width: 334,
     textAlign: "left",
     lineHeight: 40,
-  },
-  labelTypo: {
-    lineHeight: 33,
-    letterSpacing: 0,
-    fontSize: FontSize.size_3xl,
-    textAlign: "left",
   },
   checkboxFlexBox: {
     flexDirection: "row",
@@ -163,33 +139,13 @@ const styles = StyleSheet.create({
     height: 40,
   },
   role: {
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     height: 76,
     width: "85%",
     fontSize: FontSize.size_13xl,
     color: Color.colorBlack,
   },
   backArrowParent: {
-    marginTop: 54,
-  },
-  label: {
-    fontFamily: FontFamily.pTSansRegular,
-    color: Color.colorBlack,
-  },
-  volunteer: {
-    fontFamily: FontFamily.pTSansRegular,
-  },
-  text: {
-    fontFamily: FontFamily.robotoRegular,
-  },
-  label1: {
-    color: "rgba(0, 0, 0, 0.87)",
-  },
-  checkboxdefaultCheckboxAnd: {
-    marginTop: 61,
-  },
-  checkboxcheckedCheckboxAndParent: {
-    width: "85%",
     marginTop: 54,
   },
   approvalRequiredFor: {
@@ -203,7 +159,7 @@ const styles = StyleSheet.create({
   },
   approvalRequiredForContainer: {
     color: Color.colorLightgray,
-    fontFamily: FontFamily.pTSansRegular,
+    fontFamily: FontFamily.PTSansRegular,
     width: "85%",
     marginTop: 54,
   },
@@ -212,7 +168,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     textAlign: "center",
     color: Color.colorBlack,
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     lineHeight: 22,
     position: "relative",

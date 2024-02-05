@@ -27,12 +27,12 @@ const requestNotificationPermissions = async () => {
 };
 
 const Notifications = () => {
-  const [toggleOnValue, setToggleOnValue] = useState(true);
-  const [toggleOffValue, setToggleOffValue] = useState(true);
-  const [toggleOff1Value, setToggleOff1Value] = useState(undefined);
-  const [toggleOff2Value, setToggleOff2Value] = useState(undefined);
+  const [toggleOnValue, setToggleOnValue] = useState(false);
+  const [toggleOffValue, setToggleOffValue] = useState(false);
+  const [toggleOff1Value, setToggleOff1Value] = useState(false);
+  const [toggleOff2Value, setToggleOff2Value] = useState(false);
   const [toggleOff3Value, setToggleOff3Value] = useState(false);
-  const [toggleOff4Value, setToggleOff4Value] = useState(undefined);
+  const [toggleOff4Value, setToggleOff4Value] = useState(false);
 
   return (
     <ScrollView
@@ -49,62 +49,62 @@ const Notifications = () => {
           <Switch
             style={[styles.toggleOn, styles.toggleSpaceBlock]}
             value={toggleOnValue}
-            onValueChange={setToggleOnValue}
+            onValueChange={(value) => setToggleOnValue(value)}
             color="#fbb042"
           />
         </View>
-        <View style={styles.parentSpaceBlock}>
+        <View style={styles.meetingRemindersParent}>
           <Text style={[styles.meetingReminders, styles.notifications1Clr]}>
             Meeting Changes
           </Text>
           <Switch
-            style={styles.toggleOff}
+            style={[styles.toggleOn, styles.toggleSpaceBlock]}
             value={toggleOffValue}
-            onValueChange={setToggleOffValue}
+            onValueChange={(value) => setToggleOffValue(value)}
             color="#fbb042"
           />
         </View>
-        <View style={[styles.newsParent, styles.parentSpaceBlock]}>
+        <View style={[styles.meetingRemindersParent]}>
           <Text style={[styles.meetingReminders, styles.notifications1Clr]}>
             News
           </Text>
           <Switch
             style={[styles.toggleOn, styles.toggleSpaceBlock]}
             value={toggleOff1Value}
-            onValueChange={setToggleOff1Value}
+            onValueChange={(value) => setToggleOff1Value(value)}
             color="#fbb042"
           />
         </View>
-        <View style={[styles.newsParent, styles.parentSpaceBlock]}>
+        <View style={styles.meetingRemindersParent}>
           <Text style={[styles.meetingReminders, styles.notifications1Clr]}>
             Role Change
           </Text>
           <Switch
             style={[styles.toggleOn, styles.toggleSpaceBlock]}
             value={toggleOff2Value}
-            onValueChange={setToggleOff2Value}
+            onValueChange={(value) => setToggleOff2Value(value)}
             color="#fbb042"
           />
         </View>
-        <View style={[styles.newsParent, styles.parentSpaceBlock]}>
+        <View style={[styles.meetingRemindersParent]}>
           <Text style={[styles.meetingReminders, styles.notifications1Clr]}>
             Rate Group
           </Text>
           <Switch
             style={[styles.toggleOff3, styles.toggleSpaceBlock]}
             value={toggleOff3Value}
-            onValueChange={setToggleOff3Value}
+            onValueChange={(value) => setToggleOff3Value(value)}
             color="#fbb042"
           />
         </View>
-        <View style={[styles.newsParent, styles.parentSpaceBlock]}>
+        <View style={[styles.meetingRemindersParent]}>
           <Text style={[styles.meetingReminders, styles.notifications1Clr]}>
             Sign In at Group
           </Text>
           <Switch
             style={[styles.toggleOn, styles.toggleSpaceBlock]}
             value={toggleOff4Value}
-            onValueChange={setToggleOff4Value}
+            onValueChange={(value) => setToggleOff4Value(value)}
             color="#fbb042"
           />
         </View>

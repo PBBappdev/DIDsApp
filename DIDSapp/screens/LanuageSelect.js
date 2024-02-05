@@ -24,7 +24,7 @@ const LanuageSelect = () => {
           placeholderTextColor="#c4ced3"
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -35,7 +35,7 @@ const LanuageSelect = () => {
           placeholderTextColor="#c4ced3"
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   language: {
     top: 39,
     fontSize: FontSize.size_13xl,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     display: "flex",
     alignItems: "center",
     height: 76,
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     textAlign: "center",
     color: Color.colorBlack,
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     lineHeight: 22,
     position: "relative",

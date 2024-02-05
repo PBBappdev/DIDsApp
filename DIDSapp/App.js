@@ -176,7 +176,7 @@ const App = () => {
   const [hideSplashScreen, setHideSplashScreen] = React.useState(false);
 
   const [fontsLoaded, error] = useFonts({
-    "PT Sans": require("./assets/fonts/PTSans-Regular.ttf"),
+    "PTSans": require("./assets/fonts/PTSans-Regular.ttf"),
     "PTSans-Regular": require("./assets/fonts/PTSans-Regular.ttf"),
     "PTSans-Bold": require("./assets/fonts/PTSans-Bold.ttf"),
     "PTSans-Caption": require("./assets/fonts/PTSans-Caption.ttf"),
@@ -187,6 +187,7 @@ const App = () => {
     "Source Sans Pro": require("./assets/fonts/SourceSansPro-It.otf"),
 
   });
+
 
   React.useEffect(() => {
     setTimeout(() => {

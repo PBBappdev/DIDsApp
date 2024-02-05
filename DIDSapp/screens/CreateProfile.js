@@ -97,7 +97,7 @@ const CreateProfile = () => {
             value={textInputs.mobileNum}
             onChangeText={(value) => handleInputChange('mobileNum', value)}
             theme={{
-              fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+              fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
               colors: { text: "#000000" },
             }}
           />
@@ -111,7 +111,7 @@ const CreateProfile = () => {
           value={textInputs.country}
           onChangeText={(value) => handleInputChange('country', value)}
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -124,7 +124,7 @@ const CreateProfile = () => {
           value={textInputs.postcode}
           onChangeText={(value) => handleInputChange('postcode', value)}
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -137,7 +137,7 @@ const CreateProfile = () => {
           value={textInputs.gender}
           onChangeText={(value) => handleInputChange('gender', value)}
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -150,7 +150,7 @@ const CreateProfile = () => {
           value={textInputs.ethnicity}
           onChangeText={(value) => handleInputChange('ethnicity', value)}
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -169,7 +169,7 @@ const CreateProfile = () => {
             
           }}
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
         />
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 17,
     fontWeight: "700",
-    fontFamily: "PTSans-Bold",
+    fontFamily: FontFamily.PTSansBold,
   },
   frameDropdowndropDownContainer: {
     borderStyle: "solid",
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   },
   profile: {
     marginTop: "5%",
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     height: 40,
     width: "85%",
     alignItems: "center",
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   },
   mandatoryInformation: {
     top: "20%",
-    fontFamily: FontFamily.pTSansRegular,
+    fontFamily: FontFamily.PTSansRegular,
     height: 52,
     alignItems: "center",
     display: "flex",
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     textAlign: "center",
     color: Color.colorBlack,
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     lineHeight: 22,
     position: "relative",
