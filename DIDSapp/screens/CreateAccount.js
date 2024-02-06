@@ -12,16 +12,17 @@ import { TextInput as RNPTextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import { useTextInputContext } from '../components/TextInputContext';
-import firebaseApp  from "../firebase";
+import { firebaseApp, auth } from "../firebase";
 import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
 //import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const CreateAccount = () => {
   const navigation = useNavigation();
 
   const { textInputs, setTextInput } = useTextInputContext();
-  const auth = getAuth(firebaseApp);
+  //const auth = getAuth(firebaseApp);
   // const auth = initializeAuth(app, {
   //   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
   // });
