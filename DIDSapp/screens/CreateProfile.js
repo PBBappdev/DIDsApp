@@ -6,6 +6,7 @@ import {
   View,
   Pressable,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { Image } from "expo-image";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -14,7 +15,8 @@ import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import { useTextInputContext } from '../components/TextInputContext';
 import PhoneInput from "react-native-phone-number-input";
-//import DatePicker from 'react-native-date-picker'
+import DateTimePicker from "@react-native-community/datetimepicker"
+import { set } from "react-native-reanimated";
 
 
 const CreateProfile = () => {;
@@ -25,33 +27,33 @@ const CreateProfile = () => {;
     setTextInput(name, value);
   };
 
-  const [date, setDate] = useState(new Date())
-  const [open, setOpen] = useState(false)
 
-  const isValidDateOfBirth = (date) => {
-    // Regular expression for DD/MM/YYYY format
-    const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+  //dob components
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
 
-    return dateRegex.test(date);
-  };
-
-  const handleDateOfBirthChange = (value) => {
-    // Remove non-numeric characters
-    const numericValue = value.replace(/\D/g, '');
-
-    // Insert '/' at appropriate positions
-    let formattedDate = '';
-  for (let i = 0; i < numericValue.length; i++) {
-    if (i === 2 || i === 4) {
-      formattedDate += '/';
-    }
-    formattedDate += numericValue[i];
+  const toggleDatepicker = () => {
+    setShowPicker(!showPicker);
   }
 
-  // Update state
-  setTextInput('dOb', formattedDate);
-};
+  const onChange = ({type}, selectedDate) => {
+    if (type == 'set') {
+      const currentDate = selectedDate;
+      setDate(currentDate);
+      if (Platform.OS === 'android') {
+        toggleDatepicker();
+        console.log(currentDate)
+        setDateOfBirth(currentDate.toDateString());
+      }
+    } else {
+      toggleDatepicker();
+    }
+  }
 
+
+
+  //phone number
   const [phoneNumber, setPhoneNumber] = useState(''); 
   const [countryCode, setCountryCode] = useState('au'); 
   
@@ -124,7 +126,27 @@ const CreateProfile = () => {;
             colors: { text: "#000000" },
           }}
         />
+
+        {showPicker && (
+          <DateTimePicker
+          mode='date'
+          display="spinner"
+          value={date}
+          onChange={onChange}
+          onConfirm={() => setShowPicker(false)}
+          />
+        )}
+        
+        {/* {showPicker && Platform.OS === 'ios' && ( //for IOS
+          <View
+          style={{flexDirection: 'row',
+        justifyContent: 'space-around'}}
+          ></View>
+        )} */}
+
         <RNPTextInput
+          onPressIn={toggleDatepicker}
+          //editable={false}
           style={[styles.frameItem, styles.frameLayout]}
           label="Date Of Birth"
           placeholder="DD/MM/YYYY"
@@ -132,29 +154,14 @@ const CreateProfile = () => {;
           mode="outlined"
           placeholderTextColor="#c4ced3"
           activeOutlineColor="#fbb042"
-          value={date} // Convert date to string
-          //onTouchStart={() => setOpen(true)} // Open date picker modal on touch
-          onChangeText={(date) => {
-            setDate(date);
-          }}
+          value={dateOfBirth} 
+          //onChangeText={setDateOfBirth}
           theme={{
             fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
-        />
-        {/* <DatePicker
-          modal
-          open={open}
-          date={date}
-          onConfirm={(date) => {
-            setOpen(false);
-            setDate(date);
-          }}
-          onCancel={() => {
-            setOpen(false);
-          }}
-      /> */}
-      
+        />     
+        
       <View style={styles.mandatoryInformationParent}>
         <Text
           style={[styles.mandatoryInformation, styles.continueWrapperPosition]}
