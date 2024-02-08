@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   searchGlyphTypo: {
     textAlign: "left",
     color: Color.labelsSecondary,
-    fontFamily: FontFamily.sFProDisplayUltralightItalic,
+    fontFamily: FontFamily.SFProDisplayUltralightItalic,
     lineHeight: 22,
     fontSize: FontSize.size_mid,
   },
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   dictation: {
     textAlign: "center",
     color: Color.labelsSecondary,
-    fontFamily: FontFamily.sFProDisplayUltralightItalic,
+    fontFamily: FontFamily.SFProDisplayUltralightItalic,
     lineHeight: 22,
     fontSize: FontSize.size_mid,
   },

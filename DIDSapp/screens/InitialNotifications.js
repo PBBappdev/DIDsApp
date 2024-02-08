@@ -10,7 +10,12 @@ import * as Notifications from 'expo-notifications';
 
 
 const InitialNotifications = () => {
-  const { switchValues, setSwitchValue } = useSwitchContext();
+  const [toggleOff1Value, setToggleOff1Value] = useState(false);
+  const [toggleOff2Value, setToggleOff2Value] = useState(false);
+  const [toggleOff3Value, setToggleOff3Value] = useState(false);
+  const [toggleOff4Value, setToggleOff4Value] = useState(false);
+  const [toggleOff5Value, setToggleOff5Value] = useState(false);
+  const [toggleOff6Value, setToggleOff6Value] = useState(false);
   const navigation = useNavigation();
 
   const requestNotificationPermissions = async () => {
@@ -57,9 +62,9 @@ const InitialNotifications = () => {
           </Text>
           <Switch
             style={[styles.switchdefault, styles.switchLayout]}
-            value={switchValues.switchValue5}
+            value={toggleOff1Value}
             onValueChange={(value) => {
-              setSwitchValue('switchValue5', value);
+              setToggleOff1Value(value);
               if (value) {
                 requestNotificationPermissions();
               }
@@ -73,9 +78,9 @@ const InitialNotifications = () => {
           </Text>
           <Switch
             style={styles.switchLayout}
-            value={switchValues.switchValue}
+            value={toggleOff2Value}
             onValueChange={(value) => {
-              setSwitchValue('switchValue', value);
+              setToggleOff2Value(value);
               if (value) {
                 requestNotificationPermissions();
               }
@@ -89,9 +94,9 @@ const InitialNotifications = () => {
           </Text>
           <Switch
             style={styles.switchLayout}
-            value={switchValues.switch1Value}
+            value={toggleOff3Value}
             onValueChange={(value) => {
-              setSwitchValue('switchValue1', value);
+              setToggleOff3Value(value);
               if (value) {
                 requestNotificationPermissions();
               }
@@ -105,9 +110,9 @@ const InitialNotifications = () => {
           </Text>
           <Switch
             style={styles.switchLayout}
-            value={switchValues.switch2Value}
+            value={toggleOff4Value}
             onValueChange={(value) => {
-              setSwitchValue('switchValue2', value);
+              setToggleOff4Value(value);
               if (value) {
                 requestNotificationPermissions();
               }
@@ -121,9 +126,9 @@ const InitialNotifications = () => {
           </Text>
           <Switch
             style={styles.switchLayout}
-            value={switchValues.switch3Value}
+            value={toggleOff5Value}
             onValueChange={(value) => {
-              setSwitchValue('switchValue3', value);
+              setToggleOff5Value(value);
               if (value) {
                 requestNotificationPermissions();
               }
@@ -137,9 +142,9 @@ const InitialNotifications = () => {
           </Text>
           <Switch
             style={styles.switchLayout}
-            value={switchValues.switch4Value}
+            value={toggleOff6Value}
             onValueChange={(value) => {
-              setSwitchValue('switchValue4', value);
+              setToggleOff6Value(value);
               if (value) {
                 requestNotificationPermissions();
               }
@@ -212,7 +217,7 @@ const styles = StyleSheet.create({
   },
   notifications: {
     fontSize: FontSize.size_13xl,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     height: 76,
     width: 334,
     textAlign: "left",
@@ -225,7 +230,7 @@ const styles = StyleSheet.create({
     marginTop: 66,
   },
   meetingReminders: {
-    fontFamily: FontFamily.pTSansRegular,
+    fontFamily: FontFamily.PTSansRegular,
     width: "85%",
     height: 41,
     alignItems: "center",
@@ -247,7 +252,7 @@ const styles = StyleSheet.create({
   createAccount: {
     top: 19,
     left: 97,
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     fontSize: FontSize.size_3xl,
     position: "absolute",

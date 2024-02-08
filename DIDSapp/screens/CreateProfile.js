@@ -9,7 +9,6 @@ import {
   Platform,
 } from "react-native";
 import { Image } from "expo-image";
-import DropDownPicker from "react-native-dropdown-picker";
 import { TextInput as RNPTextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
@@ -217,11 +216,7 @@ const styles = StyleSheet.create({
     color: Color.colorBlack,
     lineHeight: 35,
   },
-  frameLayout: {
-    height: 72,
-    borderRadius: Border.br_8xs,
-    borderStyle: "solid",
-  },
+  
   continueWrapperPosition: {
     width: "100%",
     position: "relative",
@@ -261,6 +256,11 @@ const styles = StyleSheet.create({
   frameItem: {
     marginTop: "5%",
     width: "85%",
+  },
+  frameLayout: {
+    height: 72,
+    borderRadius: Border.br_8xs,
+    borderStyle: "solid",
   },
   text: {
     fontSize: FontSize.size_13xl,

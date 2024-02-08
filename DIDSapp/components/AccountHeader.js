@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     lineHeight: 22,
     fontWeight: "700",
-    fontFamily: FontFamily.pTSansCaptionBold,
+    fontFamily: FontFamily.PTSansCaptionBold,
     color: Color.colorBlack,
     textAlign: "center",
     display: "flex",

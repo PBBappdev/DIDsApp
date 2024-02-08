@@ -19,6 +19,10 @@ import { Image } from "expo-image";
 import StatePlaceholder from "../components/StatePlaceholder";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { firebaseApp, auth } from "../firebase";
+import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
+import firestore from '@react-native-firebase/firestore';
+import { getFirestore, addDoc, collection, query, where, getDocs, QueryStartAtConstraint } from "firebase/firestore";
 
 
 const Meetings1 = () => {
@@ -104,6 +108,38 @@ useEffect(() => {
 
   fetchData();
 }, []);
+
+useEffect(() => {
+  fetchMeetings();
+}, []);
+
+
+const [day, setDay] = useState('');
+
+
+const database = getFirestore(firebaseApp);
+const meetingRef = collection(database, "Meetings");
+
+const fetchMeetings = async () => {
+  try {
+    let meetingDetails = { datetime: day}
+    //const q = query(userRef, where("email", "==", email));
+    const meetingsSnapshot = await getDocs(meetingRef, meetingDetails);
+
+    meetingsSnapshot.forEach((doc) => {
+      console.log(doc.id, '=>', doc.data());
+    });
+  } catch (error) {
+    console.error('Error fetching meetings:', error);
+  }
+};
+
+
+
+
+
+
+
 
 // search function
 const [searchInput, setSearchInput] = useState('');
@@ -278,7 +314,7 @@ const resetState = () => {
                 {group.location}
               </Text>
               <Text style={[styles.text, styles.textLayout1]} numberOfLines={1}>
-                {group.time}
+                {group.day}
               </Text>
               <Image
                 style={[styles.Icon, styles.iconLayout]}
@@ -336,7 +372,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     backgroundColor: '#FBB042',
-    fontFamily: "PTSans-Regular",
+    fontFamily: FontFamily.PTSansRegular,
   },
   daydropDownContainer: {
     backgroundColor: "#fbb042",
@@ -348,13 +384,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 10,
     color: 'white',
-    fontFamily: "PTSans-Regular",
+    fontFamily: FontFamily.PTSansRegular,
     color: "#fff",
   },
   stateValue: {
     color: "#fff",
     fontSize: 16,
-    fontFamily: "PTSans-Regular",
+    fontFamily: FontFamily.PTSansRegular,
   },
   statedropDownContainer: {
     backgroundColor: "#fbb042",
@@ -373,7 +409,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     top: 10,
     color: Color.colorBlack,
-    fontFamily: FontFamily.sourceSansPro,
+    fontFamily: FontFamily.SourceSansPro,
     fontWeight: "600",
     fontStyle: "italic",
     lineHeight: 22,
@@ -381,7 +417,7 @@ const styles = StyleSheet.create({
   },
   locationTextLayout: {
     height: 30,
-    fontFamily: FontFamily.pTSansCaptionBold,
+    fontFamily: FontFamily.PTSansCaptionBold,
     fontWeight: "700",
     fontSize: FontSize.size_3xl,
     alignItems: "center",
@@ -395,7 +431,7 @@ const styles = StyleSheet.create({
   textLayout1: {
     height: 31,
     width: 220,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     fontSize: FontSize.size_lgi,
     alignItems: "center",
     display: "flex",
@@ -421,7 +457,7 @@ const styles = StyleSheet.create({
   onlineTypo: {
     width: 293,
     height: 30,
-    fontFamily: FontFamily.pTSansCaptionBold,
+    fontFamily: FontFamily.PTSansCaptionBold,
     fontWeight: "700",
     fontSize: FontSize.size_3xl,
   },
@@ -507,7 +543,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     left: 0,
     color: Color.colorBlack,
-    fontFamily: FontFamily.sourceSansPro,
+    fontFamily: FontFamily.SourceSansPro,
     fontWeight: "600",
     fontStyle: "italic",
     lineHeight: 22,
@@ -552,7 +588,7 @@ const styles = StyleSheet.create({
     left: 3,
     textAlign: "left",
     color: Color.colorBlack,
-    fontFamily: FontFamily.sourceSansPro,
+    fontFamily: FontFamily.SourceSansPro,
     fontWeight: "600",
     fontStyle: "italic",
     lineHeight: 22,
@@ -570,7 +606,7 @@ const styles = StyleSheet.create({
     color: Color.colorTomato_100,
     width: 293,
     height: 30,
-    fontFamily: FontFamily.pTSansCaptionBold,
+    fontFamily: FontFamily.PTSansCaptionBold,
     fontWeight: "700",
     fontSize: FontSize.size_3xl,
     top: 4,
@@ -580,7 +616,7 @@ const styles = StyleSheet.create({
     top: 33,
     height: 31,
     width: 220,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     fontSize: FontSize.size_lgi,
   },
   allGroups: {

@@ -56,7 +56,7 @@ const Login = () => {
             placeholderTextColor="#fff"
             activeOutlineColor="#fbb042"
             theme={{
-              fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+              fonts: { regular: { fontFamily:  FontFamily.PTSans, fontWeight: "Bold" } },
               colors: { text: "#c4ced3" },
             }}
             
@@ -70,7 +70,7 @@ const Login = () => {
             placeholderTextColor="#c4ced3"
             activeOutlineColor="#fbb042"
             theme={{
-              fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+              fonts: { regular: { fontFamily:  FontFamily.PTSans, fontWeight: "Bold" } },
               colors: { text: "#c4ced3" },
             }}
             secureTextEntry
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   login1: {
     fontSize: FontSize.size_13xl,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     height: 76,
     width: 334,
     textAlign: "left",
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     color: Color.colorTomato_100,
     textAlign: "left",
     display: "flex",
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     fontSize: FontSize.size_mid,
   },
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     textAlign: "center",
     color: Color.colorBlack,
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     lineHeight: 22,
     position: "relative",
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     width: 334,
     marginTop: 82,
     textAlign: "center",
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     fontSize: FontSize.size_mid,
     display: "flex",

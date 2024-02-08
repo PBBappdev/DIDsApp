@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   settings1: {
     fontSize: FontSize.size_xs,
     lineHeight: 22,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     color: Color.colorWhite,
     textAlign: "center",
   },

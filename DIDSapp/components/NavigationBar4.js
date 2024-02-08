@@ -28,7 +28,7 @@ const NavigationBar4 = ({ style }) => {
 const styles = StyleSheet.create({
   meetingsTypo: {
     textAlign: "center",
-    fontFamily: FontFamily.interRegular,
+    fontFamily: FontFamily.InterRegular,
     lineHeight: 22,
     fontSize: FontSize.size_xs,
   },

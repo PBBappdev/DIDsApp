@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   helpline1: {
     fontSize: FontSize.size_xs,
     lineHeight: 22,
-    fontFamily: FontFamily.interRegular,
+    fontFamily: FontFamily.InterRegular,
     color: Color.colorGoldenrod_100,
     textAlign: "center",
   },

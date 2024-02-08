@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     top: 39,
     left: 90,
     fontSize: FontSize.size_4xl,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     display: "flex",
     alignItems: "center",
     width: 220,
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     left: 89,
     fontSize: FontSize.size_7xl,
     fontWeight: "700",
-    fontFamily: FontFamily.pTSansCaptionBold,
+    fontFamily: FontFamily.PTSansCaptionBold,
   },
   backArrowParent: {
     top: 35,

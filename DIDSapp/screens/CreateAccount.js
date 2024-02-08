@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   ScrollView,
   Text,
@@ -13,19 +13,15 @@ import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import { useTextInputContext } from '../components/TextInputContext';
 import { firebaseApp, auth } from "../firebase";
-import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
-//import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAuth,  initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
+import { getFirestore, addDoc, collection, query, where, getDocs } from "firebase/firestore";
 
 
 const CreateAccount = () => {
   const navigation = useNavigation();
-
+  const [ firstName, setFirstName] = useState('');
   const { textInputs, setTextInput } = useTextInputContext();
-  //const auth = getAuth(firebaseApp);
-  // const auth = initializeAuth(app, {
-  //   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-  // });
+ 
 
   const signup = async () => {
     // Check if passwords match
@@ -44,13 +40,57 @@ const CreateAccount = () => {
     //create user account
     try {
       const { user } = await createUserWithEmailAndPassword(auth, textInputs.emailAddress, textInputs.password)
+      addUser();
       console.log(user)
+      
       navigation.navigate("CreateProfile")
     } catch ({message}) {
       alert("Cannot create account. Please check login details")
       console.log(user)
     }
-  }
+  };
+
+  
+  
+  // const fetchUserName = async (email) => {
+  //   try {
+  //     const database = getFirestore(firebaseApp);
+  //     const userRef = collection(database, "Users");
+  //     const q = query(userRef, where("email", "==", email));
+  //     const querySnapshot = await getDocs(q);
+  
+  //     if (querySnapshot.empty) {
+  //       alert("User not found");
+  //       return;
+  //     }
+  
+  //     // Assuming email is unique and there's only one document returned
+  //     querySnapshot.forEach((doc) => {
+  //       const userName = doc.data().fName; // Assuming the field is fName
+  //       alert(`User's name: ${userName}`);
+  //     });
+  //   } catch (error) {
+  //     console.error("Error fetching user:", error);
+  //     alert("Error fetching user");
+  //   }
+  // };
+
+  // fetchUserName("astonlamport@gmail.com");
+  
+  const database = getFirestore(firebaseApp);
+  const userRef = collection(database, "Users");
+
+  const addUser = async () => {
+    try {
+      let user = { fName: firstName, lName: textInputs.lastName, email: textInputs.emailAddress, userID: auth.currentUser.uid };
+      console.log("Adding user:", user);
+      await addDoc(userRef, user);
+      console.log("User added successfully");
+    } catch (e) {
+      alert (e)
+      console.log(e);
+    }
+  };
 
   const handleInputChange = (name, value) => {
     setTextInput(name, value);
@@ -86,8 +126,8 @@ const CreateAccount = () => {
           placeholder="First Name"
           mode="outlined"
           placeholderTextColor="#c4ced3"
-          value={textInputs.firstName}
-          onChangeText={(value) => handleInputChange('firstName', value)}
+          value={firstName}
+          onChangeText={setFirstName}
           activeOutlineColor="#fbb042"
           theme={{
             fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
@@ -155,8 +195,9 @@ const CreateAccount = () => {
         <TouchableOpacity
           style={[styles.continueWrapper, styles.frameLayout1]}
           activeOpacity={0.8}
-          onPress={() => navigation.navigate("CreateProfile")}
-          // onPress={signup} //uncomment for testing login
+          //onPress={() => navigation.navigate("CreateProfile")}
+          onPress={signup} //uncomment for testing login
+          //onPress={addUser}
         >
           <Text style={styles.continue}>Continue</Text>
         </TouchableOpacity>

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   info: {
     fontSize: FontSize.size_xs,
     lineHeight: 22,
-    fontFamily: FontFamily.interRegular,
+    fontFamily: FontFamily.InterRegular,
     color: Color.colorBlack,
     textAlign: "center",
   },

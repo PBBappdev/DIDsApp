@@ -53,7 +53,7 @@ const ResetPassword = () => {
           placeholderTextColor="#c4ced3"
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily:  FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#c4ced3" },
           }}
         />
@@ -72,7 +72,7 @@ const ResetPassword = () => {
           placeholderTextColor="#c4ced3"
           activeOutlineColor="#fbb042"
           theme={{
-            fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
+            fonts: { regular: { fontFamily:  FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#c4ced3" },
           }}
         />
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   resetPassword: {
     fontSize: FontSize.size_13xl,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     textAlign: "left",
     height: 76,
     width: 334,
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 180,
     textAlign: "center",
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     position: "absolute",
     display: "flex",

@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   meetings: {
     fontSize: FontSize.size_xs,
     lineHeight: 22,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     color: Color.colorTomato_100,
     textAlign: "center",
   },

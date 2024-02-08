@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     position: "relative",
     fontSize: FontSize.size_xs,
     lineHeight: 22,
-    fontFamily: FontFamily.interRegular,
+    fontFamily: FontFamily.InterRegular,
     color: Color.colorGoldenrod_100,
     textAlign: "center",
   },

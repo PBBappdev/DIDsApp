@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   text: {
     top: 40,
     fontSize: FontSize.size_4xl,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     width: 220,
     height: 31,
   },
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     top: 10,
     fontSize: FontSize.size_7xl,
     fontWeight: "700",
-    fontFamily: FontFamily.pTSansCaptionBold,
+    fontFamily: FontFamily.PTSansCaptionBold,
     width: 232,
     height: 30,
   },
