@@ -49,33 +49,6 @@ const CreateAccount = () => {
       console.log(user)
     }
   };
-
-  
-  
-  // const fetchUserName = async (email) => {
-  //   try {
-  //     const database = getFirestore(firebaseApp);
-  //     const userRef = collection(database, "Users");
-  //     const q = query(userRef, where("email", "==", email));
-  //     const querySnapshot = await getDocs(q);
-  
-  //     if (querySnapshot.empty) {
-  //       alert("User not found");
-  //       return;
-  //     }
-  
-  //     // Assuming email is unique and there's only one document returned
-  //     querySnapshot.forEach((doc) => {
-  //       const userName = doc.data().fName; // Assuming the field is fName
-  //       alert(`User's name: ${userName}`);
-  //     });
-  //   } catch (error) {
-  //     console.error("Error fetching user:", error);
-  //     alert("Error fetching user");
-  //   }
-  // };
-
-  // fetchUserName("astonlamport@gmail.com");
   
   const database = getFirestore(firebaseApp);
   const userRef = collection(database, "Users");

@@ -12,6 +12,7 @@ import {
   Modal,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  RefreshControl,
 } from "react-native";
 import { KeyboardAvoidingView } from 'react-native';
 import DropDownPicker from "react-native-dropdown-picker";
@@ -22,11 +23,24 @@ import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { firebaseApp, auth } from "../firebase";
 import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
 import firestore from '@react-native-firebase/firestore';
-import { getFirestore, addDoc, collection, query, where, getDocs, QueryStartAtConstraint } from "firebase/firestore";
+import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, getDocs, QueryStartAtConstraint } from "firebase/firestore";
 
 
 const Meetings1 = () => {
   StatusBar.setBackgroundColor("#FBB042");
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await fetchMeetings(); // Assuming fetchMeetings() is your function to fetch meetings from the database
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    }
+    setRefreshing(false);
+  };
+
+
   const navigation = useNavigation();
 
   //day modal
@@ -80,83 +94,6 @@ const Meetings1 = () => {
     closeStateModal();
   };
 
-
-
-  //dynamically grab groups
-  const [savedGroups, setSavedGroups] = useState([]);
-  const [allGroups, setAllGroups] = useState([]);
-
-// Add these state variables for filtered groups
-const [filteredSavedGroups, setFilteredSavedGroups] = useState([]);
-const [filteredAllGroups, setFilteredAllGroups] = useState([]);
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const data = require('../groups.json');
-      const groupsData = data.groups;
-      const savedGroupsData = data.savedGroups;
-
-      setSavedGroups(savedGroupsData);
-      setAllGroups(groupsData);
-      setFilteredSavedGroups(savedGroupsData); // Initialize filtered groups with all groups
-      setFilteredAllGroups(groupsData);
-    } catch (error) {
-      console.error('Error fetching data:', error.message);
-    }
-  };
-
-  fetchData();
-}, []);
-
-useEffect(() => {
-  fetchMeetings();
-}, []);
-
-
-const [day, setDay] = useState('');
-
-
-const database = getFirestore(firebaseApp);
-const meetingRef = collection(database, "Meetings");
-
-const fetchMeetings = async () => {
-  try {
-    let meetingDetails = { datetime: day}
-    //const q = query(userRef, where("email", "==", email));
-    const meetingsSnapshot = await getDocs(meetingRef, meetingDetails);
-
-    meetingsSnapshot.forEach((doc) => {
-      console.log(doc.id, '=>', doc.data());
-    });
-  } catch (error) {
-    console.error('Error fetching meetings:', error);
-  }
-};
-
-
-
-
-
-
-
-
-// search function
-const [searchInput, setSearchInput] = useState('');
-
-useEffect(() => {
-  // Your logic to filter groups based on searchInput
-  const filteredSavedGroups = savedGroups.filter(group =>
-    group.location.toLowerCase().includes(searchInput.toLowerCase())
-  );
-  setFilteredSavedGroups(filteredSavedGroups);
-
-  const filteredAllGroups = allGroups.filter(group =>
-    group.location.toLowerCase().includes(searchInput.toLowerCase())
-  );
-  setFilteredAllGroups(filteredAllGroups);
-}, [searchInput, savedGroups, allGroups]);
-
 //cancel buttom
 const resetState = () => {
   setDayValue(null);
@@ -171,6 +108,113 @@ const resetState = () => {
 };
 
 
+  //dynamically grab groups
+  const [savedGroups, setSavedGroups] = useState([]);
+  const [allGroups, setAllGroups] = useState([]);
+
+// Add these state variables for filtered groups
+const [filteredSavedGroups, setFilteredSavedGroups] = useState([]);
+const [filteredAllGroups, setFilteredAllGroups] = useState([]);
+
+useEffect(() => {
+  fetchMeetings();
+}, []);
+
+
+const [day, setDay] = useState('');
+
+// get meeting data
+const database = getFirestore(firebaseApp);
+const meetingRef = collection(database, "Meetings");
+const [meetingsData, setMeetingsData] = useState([]);
+const fetchMeetings = async () => {
+  try {
+    const meetingsSnapshot = await getDocs(meetingRef);
+    const meetingsData = [];
+    meetingsSnapshot.forEach((doc) => {
+      const meeting = doc.data();
+      meetingsData.push({
+        id: doc.id,
+        location: meeting.suburb.trim(),
+        day: meeting.day.trim(),
+        date: meeting.date.trim(),
+        time: meeting.time.trim(),
+      });
+    });
+    setSavedGroups(meetingsData);
+    setFilteredSavedGroups(meetingsData); // Update filtered saved groups
+    setAllGroups(meetingsData);
+    setFilteredAllGroups(meetingsData); // Update filtered saved groups
+  } catch (error) {
+    console.error('Error fetching meetings:', error);
+  }
+};
+
+// search function
+const [searchInput, setSearchInput] = useState('');
+
+useEffect(() => {
+  // logic to filter groups based on searchInput
+  const filteredSavedGroups = savedGroups.filter(meeting =>
+    meeting.location.toLowerCase().includes(searchInput.toLowerCase()) ||
+    meeting.day.toLowerCase().includes(searchInput.toLowerCase()) ||
+    meeting.date.toLowerCase().includes(searchInput.toLowerCase()) ||
+    meeting.time.toLowerCase().includes(searchInput.toLowerCase())
+  );
+  setFilteredSavedGroups(filteredSavedGroups);
+
+  const filteredAllGroups = allGroups.filter(meeting =>
+    meeting.location.toLowerCase().includes(searchInput.toLowerCase()) ||
+    meeting.day.toLowerCase().includes(searchInput.toLowerCase()) ||
+    meeting.date.toLowerCase().includes(searchInput.toLowerCase()) ||
+    meeting.time.toLowerCase().includes(searchInput.toLowerCase())
+  );
+  setFilteredAllGroups(filteredAllGroups);
+}, [searchInput, savedGroups, allGroups]);
+
+
+
+//SAVE group
+const saveMeeting = async (meetingId) => {
+  try {
+    const user = auth.currentUser;
+    //console.log("Current user:", user);
+
+    // Search for the user document with matching userID
+    const usersCollectionRef = collection(database, "Users");
+    if (!usersCollectionRef) {
+      console.error("User collection reference is undefined");
+    }
+    const querySnapshot = await getDocs(usersCollectionRef.where("userID", "==", user.uid));
+    console.log("Query snapshot", querySnapshot);
+
+    if (!querySnapshot.empty) {
+      // Iterate through the query results (should be only one result)
+      querySnapshot.forEach((doc) => {
+        const userData = doc.data();
+        console.log("User document:", userData);
+
+        // Get the reference to the user's meetings collection
+        const userMeetingsRef = collection(doc.ref, "Meetings");
+        console.log("User meetings reference:", userMeetingsRef);
+
+        // Add the meeting to the user's meetings collection
+        addDoc(userMeetingsRef, {
+          meetingId: meetingId
+        }).then(() => {
+          console.log("Meeting saved successfully!");
+        }).catch((error) => {
+          console.error("Error saving meeting:", error);
+        });
+      });
+    } else {
+      console.log("User document not found for the current user.");
+    }
+  } catch (error) {
+    console.error("Error saving meeting:", error);
+  }
+};
+
   return (
     // <KeyboardAvoidingView
     //   style={styles.container} // You can adjust the style as needed
@@ -180,6 +224,12 @@ const resetState = () => {
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.meetingsScrollViewContent}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+        />
+      }
     >
       <View style={styles.statusBarParent}>
         <StatusBar barStyle="default" />
@@ -304,17 +354,17 @@ const resetState = () => {
           Saved Groups
         </Text>
         <View style={styles.frameParent}>
-        {filteredSavedGroups.map((group, index) => (
+        {filteredSavedGroups.map((meeting, index) => (
             <Pressable
               key={index}
               style={styles.tuesdayParentLayout}
               onPress={() => navigation.navigate("MeetingInfo")}
             >
               <Text style={[styles.locationText, styles.locationTextLayout]} numberOfLines={1}>
-                {group.location}
+              {meeting.location} - { meeting.day}
               </Text>
               <Text style={[styles.text, styles.textLayout1]} numberOfLines={1}>
-                {group.day}
+              {meeting.date} - {meeting.time}
               </Text>
               <Image
                 style={[styles.Icon, styles.iconLayout]}
@@ -336,23 +386,30 @@ const resetState = () => {
           All Groups
         </Text>
         <View style={styles.frameParent}>
-          {filteredAllGroups.map((group, index) => (
+        {filteredAllGroups.map((meeting, index) => (
             <Pressable
               key={index}
               style={styles.tuesdayParentLayout}
               onPress={() => navigation.navigate("MeetingInfo")}
             >
               <Text style={[styles.locationText, styles.locationTextLayout]}>
-                {group.location}
+              {meeting.location} - { meeting.day}
               </Text>
               <Text style={[styles.text, styles.textLayout1]}>
-                {group.time}
+              {meeting.date} - {meeting.time}
               </Text>
-              <Image
+              <Pressable  
                 style={[styles.Icon, styles.iconLayout]}
+                onPress={() => {
+                saveMeeting(meeting.id);
+                }}
+              >
+              <Image
+                style={[styles.iconLayout]}
                 contentFit="cover"
                 source={require("../assets/plus31.png")}
               />
+              </Pressable>
             </Pressable>
           ))}
         </View>
@@ -419,23 +476,23 @@ const styles = StyleSheet.create({
     height: 30,
     fontFamily: FontFamily.PTSansCaptionBold,
     fontWeight: "700",
-    fontSize: FontSize.size_3xl,
+    fontSize: 19,
     alignItems: "center",
     display: "flex",
-    top: 4,
+    top: 13,
     textAlign: "left",
     color: Color.colorBlack,
     lineHeight: 22,
     position: "absolute",
   },
   textLayout1: {
-    height: 31,
+    height: 18,
     width: 220,
     fontFamily: FontFamily.PTSansCaption,
-    fontSize: FontSize.size_lgi,
+    fontSize: 14,
     alignItems: "center",
     display: "flex",
-    top: 34,
+    bottom: 16,
     textAlign: "left",
     color: Color.colorBlack,
     lineHeight: 22,
@@ -444,9 +501,10 @@ const styles = StyleSheet.create({
   iconLayout: {
     height: 39,
     width: 39,
+    
   },
   tuesdayParentLayout: {
-    height: 69,
+    height: 75,
     borderWidth: 2,
     marginBottom: 15,
     borderColor: Color.colorLightgray,
@@ -566,7 +624,7 @@ const styles = StyleSheet.create({
   },
   Icon: {
     marginLeft: '80%',
-    marginTop: 10,
+    marginTop: 15,
     position: "relative",
   },
   onlineTuesdayParent: {
