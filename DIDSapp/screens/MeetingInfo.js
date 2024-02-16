@@ -3,8 +3,10 @@ import { StatusBar, StyleSheet, Text, Pressable, View, Linking  } from "react-na
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Color, FontSize, FontFamily } from "../GlobalStyles";
+import { useRoute } from '@react-navigation/native'
 
-const MeetingInfo = () => {
+const MeetingInfo = ({ route }) => {
+  const { location, day, date, time, state, address, description } = route.params;
   const [isSaved, setIsSaved] = React.useState(false);
 
   const toggleSave = () => {
@@ -46,7 +48,7 @@ const MeetingInfo = () => {
 
       <Text
         style={[styles.locationText, styles.saveGroupFlexBox]}
-      >{locationText}</Text>
+      >{address}</Text>
       <Pressable>
       <Text style={[styles.map, styles.mapTypo]}
       onPress={openGoogleMaps}
@@ -60,7 +62,7 @@ const MeetingInfo = () => {
 
       <Text
         style={[styles.descriptionText, styles.saveGroupFlexBox]}
-      >{descriptionText}</Text>
+      >{description}</Text>
     </View>
   );
 };

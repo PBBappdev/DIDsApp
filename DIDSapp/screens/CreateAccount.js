@@ -14,7 +14,7 @@ import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import { useTextInputContext } from '../components/TextInputContext';
 import { firebaseApp, auth } from "../firebase";
 import { getAuth,  initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
-import { getFirestore, addDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, addDoc, collection, doc, setDoc, query, where, getDocs } from "firebase/firestore";
 
 
 const CreateAccount = () => {
@@ -55,9 +55,19 @@ const CreateAccount = () => {
 
   const addUser = async () => {
     try {
-      let user = { fName: firstName, lName: textInputs.lastName, email: textInputs.emailAddress, userID: auth.currentUser.uid };
-      console.log("Adding user:", user);
-      await addDoc(userRef, user);
+      const user = auth.currentUser.uid
+      const userObj = { 
+        fName: firstName,
+        lName: textInputs.lastName, 
+        email: textInputs.emailAddress, 
+        userID: user
+      };
+
+      const userDocRef = doc(userRef, user)
+      console.log("Adding user:", userObj);
+
+      await setDoc(userDocRef, userObj);
+
       console.log("User added successfully");
     } catch (e) {
       alert (e)

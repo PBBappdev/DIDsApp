@@ -23,7 +23,7 @@ import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { firebaseApp, auth } from "../firebase";
 import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
 import firestore from '@react-native-firebase/firestore';
-import { getFirestore, doc, getDoc, updateDoc, addDoc, collection, query, where, getDocs, QueryStartAtConstraint } from "firebase/firestore";
+import { getFirestore, doc, getDoc, limit, startAfter, setDoc, deleteDoc, updateDoc, addDoc, collection, query, where, getDocs, QueryStartAtConstraint } from "firebase/firestore";
 
 
 const Meetings1 = () => {
@@ -116,39 +116,115 @@ const resetState = () => {
 const [filteredSavedGroups, setFilteredSavedGroups] = useState([]);
 const [filteredAllGroups, setFilteredAllGroups] = useState([]);
 
-useEffect(() => {
-  fetchMeetings();
-}, []);
-
 
 const [day, setDay] = useState('');
 
 // get meeting data
-const database = getFirestore(firebaseApp);
-const meetingRef = collection(database, "Meetings");
-const [meetingsData, setMeetingsData] = useState([]);
-const fetchMeetings = async () => {
+ const database = getFirestore(firebaseApp);
+ const meetingRef = collection(database, "Meetings");
+ const [meetingsData, setMeetingsData] = useState([]);
+
+ 
+ const fetchMeetings = async (pageSize, lastDoc) => {
   try {
-    const meetingsSnapshot = await getDocs(meetingRef);
-    const meetingsData = [];
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.error("User not logged in");
+      return;
+    }
+
+    const userRef = doc(database, "Users", user.uid);
+    const userMeetingsRef = collection(userRef, "SavedMeetings");
+
+    const userMeetingsSnapshot = await getDocs(userMeetingsRef);
+    const savedMeetingsIds = userMeetingsSnapshot.docs.map(doc => doc.id);
+
+    let meetingsQuery = query(meetingRef);
+
+if (lastDoc) {
+  meetingsQuery = query(meetingsQuery, startAfter(lastDoc));
+}
+
+meetingsQuery = query(meetingsQuery, limit(pageSize));
+
+const meetingsSnapshot = await getDocs(meetingsQuery);
+
+    const newMeetingsData = [];
+    const allMeetingsData = [];
+
     meetingsSnapshot.forEach((doc) => {
       const meeting = doc.data();
-      meetingsData.push({
+      if (savedMeetingsIds.includes(doc.id)) {
+        const newMeeting = {
+          id: doc.id,
+          location: meeting.suburb,
+          day: meeting.day,
+          date: meeting.date,
+          time: meeting.time,
+          state: meeting.state,
+          address: meeting.address,
+          description: meeting.description,
+        };
+        // Check if the meeting already exists in savedGroups array
+        if (!savedGroups.some(existingMeeting => existingMeeting.id === newMeeting.id)) {
+          newMeetingsData.push(newMeeting);
+        }
+      }
+      const allMeeting = {
         id: doc.id,
-        location: meeting.suburb.trim(),
-        day: meeting.day.trim(),
-        date: meeting.date.trim(),
-        time: meeting.time.trim(),
-      });
+        location: meeting.suburb,
+        day: meeting.day,
+        date: meeting.date,
+        time: meeting.time,
+        state: meeting.state,
+        address: meeting.address,
+        description: meeting.description,
+      };
+      allMeetingsData.push(allMeeting);
     });
-    setSavedGroups(meetingsData);
-    setFilteredSavedGroups(meetingsData); // Update filtered saved groups
-    setAllGroups(meetingsData);
-    setFilteredAllGroups(meetingsData); // Update filtered saved groups
-  } catch (error) {
-    console.error('Error fetching meetings:', error);
-  }
-};
+
+    // Sort newMeetingsData array by date
+    newMeetingsData.sort((a, b) => {
+      const dateA = new Date(
+        parseInt(a.date.substring(6, 10)), // Year
+        parseInt(a.date.substring(3, 5)) - 1, // Month (zero-based)
+        parseInt(a.date.substring(0, 2)) // Day
+      );
+      const dateB = new Date(
+        parseInt(b.date.substring(6, 10)), // Year
+        parseInt(b.date.substring(3, 5)) - 1, // Month (zero-based)
+        parseInt(b.date.substring(0, 2)) // Day
+      );
+      return dateA - dateB;
+    });
+
+    // Update the existing savedGroups state with only newMeetingsData
+    setSavedGroups(prevState => [...prevState, ...newMeetingsData]);
+
+    // Similarly, update the allGroups state with only newMeetingsData
+    setAllGroups(prevState => [...prevState, ...allMeetingsData]);
+
+    return meetingsSnapshot.docs[meetingsSnapshot.docs.length - 1]; // Return the last document for pagination
+
+    } catch (error) {
+      console.error('Error fetching meetings:', error);
+    }
+  };
+  //fethmeetings
+  useEffect(() => {
+    const pageSize = 10; // Adjust the page size as needed
+    let lastDoc = null;
+  
+    fetchMeetings(pageSize, lastDoc)
+      .then(lastDocument => {
+        lastDoc = lastDocument;
+      })
+      .catch(error => console.error('Error fetching meetings:', error));
+  }, [savedGroups]); // Add savedGroups as a dependency
+
+
+
 
 // search function
 const [searchInput, setSearchInput] = useState('');
@@ -174,44 +250,57 @@ useEffect(() => {
 
 
 
+// Add savedGroups as a dependency to useEffect
+
+
 //SAVE group
 const saveMeeting = async (meetingId) => {
   try {
     const user = auth.currentUser;
-    //console.log("Current user:", user);
+    //console.log(user.uid);
+    
+    // Reference to the user's document
+    const userRef = doc(database, "Users", user.uid);
 
-    // Search for the user document with matching userID
-    const usersCollectionRef = collection(database, "Users");
-    if (!usersCollectionRef) {
-      console.error("User collection reference is undefined");
-    }
-    const querySnapshot = await getDocs(usersCollectionRef.where("userID", "==", user.uid));
-    console.log("Query snapshot", querySnapshot);
+    // Get the user document snapshot
+    const userDoc = await getDoc(userRef);
 
-    if (!querySnapshot.empty) {
-      // Iterate through the query results (should be only one result)
-      querySnapshot.forEach((doc) => {
-        const userData = doc.data();
-        console.log("User document:", userData);
-
-        // Get the reference to the user's meetings collection
-        const userMeetingsRef = collection(doc.ref, "Meetings");
-        console.log("User meetings reference:", userMeetingsRef);
-
-        // Add the meeting to the user's meetings collection
-        addDoc(userMeetingsRef, {
-          meetingId: meetingId
-        }).then(() => {
-          console.log("Meeting saved successfully!");
-        }).catch((error) => {
-          console.error("Error saving meeting:", error);
-        });
+    if (userDoc.exists()) {
+      // Access the "SavedMeetings" subcollection within the user's document
+      const userMeetingsRef = collection(userRef, "SavedMeetings");
+      
+      // Add a new document to the "SavedMeetings" subcollection with the meeting ID as the document ID
+      await setDoc(doc(userMeetingsRef, meetingId), {
+        meetingId: meetingId
       });
+      
+      console.log("Meeting saved successfully!");
     } else {
-      console.log("User document not found for the current user.");
+      console.log("User document not found.");
     }
   } catch (error) {
     console.error("Error saving meeting:", error);
+  }
+};
+
+//SAVE group
+const removeMeeting = async (meetingId) => {
+  try {
+    const user = auth.currentUser;
+    //console.log(user.uid);
+
+    // Reference to the user's document
+    const userRef = doc(database, "Users", user.uid);
+
+    // Access the "SavedMeetings" subcollection within the user's document
+    const userMeetingsRef = collection(userRef, "SavedMeetings");
+
+    // Delete the meeting document from the "SavedMeetings" subcollection
+    await deleteDoc(doc(userMeetingsRef, meetingId));
+
+    console.log("Meeting removed successfully!");
+  } catch (error) {
+    console.error("Error removing meeting:", error);
   }
 };
 
@@ -358,7 +447,15 @@ const saveMeeting = async (meetingId) => {
             <Pressable
               key={index}
               style={styles.tuesdayParentLayout}
-              onPress={() => navigation.navigate("MeetingInfo")}
+              onPress={() => navigation.navigate("MeetingInfo", {
+                //address: meeting.address,
+                day: meeting.day,
+                date: meeting.date,
+                time: meeting.time,
+                state: meeting.state,
+                address: meeting.address,
+                description: meeting.description,
+              })}
             >
               <Text style={[styles.locationText, styles.locationTextLayout]} numberOfLines={1}>
               {meeting.location} - { meeting.day}
@@ -366,11 +463,18 @@ const saveMeeting = async (meetingId) => {
               <Text style={[styles.text, styles.textLayout1]} numberOfLines={1}>
               {meeting.date} - {meeting.time}
               </Text>
-              <Image
+              <Pressable  
                 style={[styles.Icon, styles.iconLayout]}
+                onPress={() => {
+                removeMeeting(meeting.id);
+                }}
+              >
+              <Image
+                style={[styles.iconLayout]}
                 contentFit="cover"
                 source={require("../assets/minus2.png")}
               />
+              </Pressable>
             </Pressable>
           ))}
           <Image
@@ -501,7 +605,7 @@ const styles = StyleSheet.create({
   iconLayout: {
     height: 39,
     width: 39,
-    
+    right: -8,
   },
   tuesdayParentLayout: {
     height: 75,
