@@ -1,4 +1,4 @@
-import React, { useState, useRef  } from "react";
+import React, { useState, useEffect  } from "react";
 import {
   ScrollView,
   Text,
@@ -16,6 +16,10 @@ import { useTextInputContext } from '../components/TextInputContext';
 import PhoneInput from "react-native-phone-number-input";
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { set } from "react-native-reanimated";
+import { firebaseApp, auth } from "../firebase";
+import { getAuth,  initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence, deleteUser} from "firebase/auth";
+import { getFirestore, addDoc, collection, doc, setDoc, query, where, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
+
 
 
 const CreateProfile = () => {;
@@ -50,17 +54,74 @@ const CreateProfile = () => {;
     }
   }
 
-
-
   //phone number
   const [phoneNumber, setPhoneNumber] = useState(''); 
   const [countryCode, setCountryCode] = useState('au'); 
-  
 
+  //push to db
+  const database = getFirestore(firebaseApp);
+  const userRef = collection(database, "Users");
+  const addUser = async () => {
+    try {
+      const user = auth.currentUser.uid
+      const userObj = { 
+        phoneNumber: phoneNumber,
+        phoneCountrycode: countryCode,
+        gender: textInputs.gender, 
+        postcode: textInputs.postcode, 
+        DoB: dateOfBirth,
+      };
+
+      const userDocRef = doc(userRef, user)
+      console.log("Adding user:", userObj);
+
+      await updateDoc(userDocRef, userObj);
+
+      console.log("User data added successfully");
+      navigation.navigate("LanuageSelect");
+
+    } catch (e) {
+      alert (e)
+      console.log(e);
+    }
+  };
+
+
+//remove user details from auth and user collection
+const auth = getAuth();
+const user = auth.currentUser;
+const [removedAuth, setRemovedAuth] = useState(false);
+const [removedDoc, setRemovedDoc] = useState(false);
+
+const removeUserDetails = async () => {
+  try {
+    if (user) {
+      await deleteUser(user);
+      console.log("Deleted user successfully:");
+      setRemovedAuth(true);
+      
+      const userReference = doc(database, "users", user.uid);
+      await deleteDoc(userReference);
+      console.log("Deleted user document successfully:");
+      setRemovedDoc(true);
+      
+      
+    } else {
+      console.log("User is not authenticated");
+    }
+  } catch (error) {
+    console.error("Error deleting user:", error);
+  }
+  
+  if (removedAuth && removedDoc == true) {
+    await navigation.navigate("CreateAccount");
+  }
+ 
+};
 
 
   return (
-    <ScrollView
+    <View
       style={styles.createprofile}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
@@ -70,7 +131,8 @@ const CreateProfile = () => {;
       <View style={styles.backArrowParent}>
         <Pressable
           style={styles.backArrow}
-          onPress={() => navigation.navigate("CreateAccount")}
+          //onPress={() => navigation.navigate("CreateAccount")}
+          onPress = {removeUserDetails}
         >
           <Image
             style={styles.icon}
@@ -174,12 +236,13 @@ const CreateProfile = () => {;
         <TouchableOpacity
           style={[styles.continueWrapper, styles.continueWrapperPosition]}
           activeOpacity={0.7}
-          onPress={() => navigation.navigate("LanuageSelect")}
+          //onPress={() => navigation.navigate("LanuageSelect")}
+          onPress={addUser}
         >
           <Text style={styles.continue}>Continue</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -305,6 +368,7 @@ const styles = StyleSheet.create({
   createprofile: {
     backgroundColor: Color.colorWhite,
     flex: 1,
+    paddingLeft: 20,
     maxWidth: "100%",
     width: "100%",
   },

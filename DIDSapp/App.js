@@ -75,7 +75,7 @@ import { name as appName } from './app.json';
 
 
 
-
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   View,
@@ -172,7 +172,10 @@ function BottomTabsRoot({ navigation }) {
 }
 
 const App = () => {
-  
+
+  const [user, setUser] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
   const [hideSplashScreen, setHideSplashScreen] = React.useState(false);
 
   const [fontsLoaded, error] = useFonts({
@@ -187,6 +190,8 @@ const App = () => {
     "Source Sans Pro": require("./assets/fonts/SourceSansPro-It.otf"),
 
   });
+
+  
 
 
   React.useEffect(() => {
@@ -319,10 +324,8 @@ const App = () => {
               <Stack.Screen
                 name="MeetingInfo"
                 component={MeetingInfo}
-                options={(props) => ({
-                  headerShown: true,
-                  header: () => <FrameComponent />,
-                })}
+                options={{ headerShown: false 
+                }}
               />
               <Stack.Screen
                 name="Login"

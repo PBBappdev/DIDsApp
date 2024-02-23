@@ -57,7 +57,7 @@ const Login = () => {
             activeOutlineColor="#fbb042"
             theme={{
               fonts: { regular: { fontFamily:  FontFamily.PTSans, fontWeight: "Bold" } },
-              colors: { text: "#c4ced3" },
+              colors: { text: "black" },
             }}
             
           />
@@ -71,7 +71,7 @@ const Login = () => {
             activeOutlineColor="#fbb042"
             theme={{
               fonts: { regular: { fontFamily:  FontFamily.PTSans, fontWeight: "Bold" } },
-              colors: { text: "#c4ced3" },
+              colors: { text: "black" },
             }}
             secureTextEntry
           />
@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
   },
   byUsingOurContainer: {
     height: 73,
-    width: 334,
-    marginTop: 82,
+    width: "80%",
+    marginTop: 20,
     textAlign: "center",
     fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",

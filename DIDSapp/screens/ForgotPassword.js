@@ -1,16 +1,36 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { Text, StyleSheet, View, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { TextInput as RNPTextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { FontFamily, Color, FontSize, Border } from "../GlobalStyles";
+import { firebaseApp, auth } from "../firebase";
+import { getAuth, initializeAuth, connectAuthEmulator, confirmPasswordReset, sendPasswordResetEmail} from "firebase/auth";
 
 const ForgotPassword = () => {
   const navigation = useNavigation();
+  const [email, setEmail] = useState("");
+
+  const handleResetPassword = async() => {
+    await sendPasswordResetEmail(auth, email)
+      .then(() => alert("Password reset email sent"))
+      .catch((error) => console.log(error.message));
+    // if (email) {
+    //   auth
+    //     .sendPasswordResetEmail(email)
+    //     .then(() => {
+    //       Alert.alert("Password Reset Email Sent", "Check your email for instructions to reset your password.");
+    //     })
+    //     .catch((error) => {
+    //       Alert.alert("Error", error.message);
+    //     });
+    // } else {
+    //   Alert.alert("Error", "Please enter your email address.");
+    // }
+  };
 
   return (
     <View style={styles.forgotpassword}>
-      
       <View style={styles.backArrowParent}>
         <Pressable
           style={styles.backArrow}
@@ -35,14 +55,17 @@ const ForgotPassword = () => {
         mode="outlined"
         placeholderTextColor="#c4ced3"
         activeOutlineColor="#fbb042"
+        
         theme={{
-          fonts: { regular: { fontFamily: "PT Sans", fontWeight: "Bold" } },
-          colors: { text: "#c4ced3" },
+          fonts: { regular: { fontFamily:  FontFamily.PTSans, fontWeight: "Bold" } },
+          colors: { text: "black" },
         }}
+        value={email}
+        onChangeText={setEmail}
       />
       <Pressable
         style={styles.resetPasswordWrapper}
-        onPress={() => navigation.navigate("ResetPassword")}
+        onPress={handleResetPassword}
       >
         <Text style={[styles.resetPassword]}>
           Reset Password
@@ -68,7 +91,7 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     fontSize: FontSize.size_13xl,
-    fontFamily: FontFamily.pTSansCaption,
+    fontFamily: FontFamily.PTSansCaption,
     height: 76,
     width: 334,
     textAlign: "left",
@@ -81,7 +104,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start', // Center items vertically
   },
   enterYourEmail: {
-    fontFamily: FontFamily.pTSansRegular,
+    fontFamily: FontFamily.PTSansRegular,
     height: 65,
     width: 334,
     textAlign: "left",
@@ -101,7 +124,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     textAlign: "center",
     color: Color.colorBlack,
-    fontFamily: FontFamily.pTSansBold,
+    fontFamily: FontFamily.PTSansBold,
     fontWeight: "700",
     lineHeight: 22,
     position: "relative",

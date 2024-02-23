@@ -14,13 +14,18 @@ import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 import { Switch } from 'react-native-switch';
 import PhoneInput from "react-native-phone-number-input";
+import { firebaseApp, auth } from "../firebase";
+import { getAuth,  initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
+import { getFirestore, addDoc, collection, doc, setDoc, query, where, getDocs, updateDoc } from "firebase/firestore";
+
+
 
 const CreateProfile = () => {;
   const navigation = useNavigation();
   const [lanuage, setLanuage] = useState('');
 
   const [countryCode, setCountryCode] = useState('AU');
-  const [countryName, setyCountryName] =useState('Australia')
+  const [countryName, setCountryName] =useState('Australia')
   const handleInputChange = (name, value) => {
     setTextInput(name, value);
   };
@@ -37,6 +42,32 @@ const CreateProfile = () => {;
 
   const handlePressCountryPicker = () => {
     // Logic to open the country picker modal
+  };
+
+  //push to db
+  const database = getFirestore(firebaseApp);
+  const userRef = collection(database, "Users");
+  const addUser = async () => {
+    try {
+      const user = auth.currentUser.uid
+      const userObj = { 
+        FirstNationsPerson: indigenous,
+        EnglishNativeLanguage: englishNative,
+        BirthCountry: countryName 
+      };
+
+      const userDocRef = doc(userRef, user)
+      console.log("Adding user:", userObj);
+
+      await updateDoc(userDocRef, userObj);
+
+      console.log("User data added successfully");
+      navigation.navigate("RoleSelect");
+
+    } catch (e) {
+      alert (e)
+      console.log(e);
+    }
   };
   return (
     <ScrollView
@@ -120,7 +151,7 @@ const CreateProfile = () => {;
             const selectedCountryCode = countryData.name; // Ensure countryData is defined
             console.log("Selected country code:", selectedCountryCode);
             setCountryCode(selectedCountryCode);
-            setyCountryName(selectedCountryCode);
+            setCountryName(selectedCountryCode);
 
           }}
         />
@@ -159,7 +190,8 @@ const CreateProfile = () => {;
         <TouchableOpacity
           style={[styles.continueWrapper, styles.continueWrapperPosition]}
           activeOpacity={0.7}
-          onPress={() => navigation.navigate("RoleSelect")}
+          //onPress={() => navigation.navigate("RoleSelect")}
+          onPress={addUser}
         >
           <Text style={styles.continue}>Continue</Text>
         </TouchableOpacity>

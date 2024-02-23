@@ -6,21 +6,51 @@ import { useNavigation } from "@react-navigation/native";
 import { Color, FontSize, FontFamily, Border } from "../GlobalStyles";
 //import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RadioGroup, Radio } from "@ui-kitten/components";
+import { firebaseApp, auth } from "../firebase";
+
+import { getAuth,  initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
+import { getFirestore, addDoc, collection, doc, setDoc, query, where, getDocs, updateDoc } from "firebase/firestore";
 
 
 const RoleSelect = () => {
   const [selectedRole, setSelectedRole] = useState(""); // Updated state
-
+  const [roleActive, setRoleActive] = useState("");
   const navigation = useNavigation();
 
   
   const handleRadioPress = (role) => {
     setSelectedRole(role);
+    setRoleActive("Client");
   };
 
 
   const isContinueEnabled = selectedRole !== ""; // Check if a role is selected
   
+
+  //push to db
+  const database = getFirestore(firebaseApp);
+  const userRef = collection(database, "Users");
+  const addUser = async () => {
+    try {
+      const user = auth.currentUser.uid
+      const userObj = { 
+        RoleActive: roleActive,
+        RequestedRole: selectedRole,
+      };
+
+      const userDocRef = doc(userRef, user)
+      console.log("Adding user:", userObj);
+
+      await updateDoc(userDocRef, userObj);
+
+      console.log("User data added successfully");
+      navigation.navigate("InitialNotifications");
+
+    } catch (e) {
+      alert (e)
+      console.log(e);
+    }
+  };
   return (
     <ScrollView
       style={styles.roleselect}
@@ -79,7 +109,8 @@ const RoleSelect = () => {
         style={styles.continueWrapper}
         onPress={() => {
           if (isContinueEnabled) {
-            navigation.navigate("InitialNotifications");
+            addUser();
+            //navigation.navigate("InitialNotifications");
           } else {
             // Display an alert if Continue is pressed without selecting a role
             alert("Please select a role before continuing.");

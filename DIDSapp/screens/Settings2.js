@@ -3,9 +3,26 @@ import { StatusBar, StyleSheet, Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { auth } from "../firebase";
+
 
 const Settings2 = () => {
   const navigation = useNavigation();
+
+  const logout = async () => {
+    try {
+      await auth.signOut();
+      console.log("User logged out successfully");
+      navigation.navigate("Welcome");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  const handleLogout = () => {
+    logout(); // Call the logout function when the button is pressed
+    
+  };
 
   return (
     <View style={styles.settings}>
@@ -45,6 +62,14 @@ const Settings2 = () => {
           <Text
             style={[styles.termsConditions, styles.changeTypo]}
           >{`Terms & Conditions`}</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.notificationsWrapper, styles.wrapperLayout]}
+          onPress={handleLogout}
+        >
+          <Text style={[styles.changePassword, styles.changeTypo]}>
+            Logout
+          </Text>
         </Pressable>
       </View>
     </View>

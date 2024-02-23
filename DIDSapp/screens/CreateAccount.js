@@ -22,7 +22,10 @@ const CreateAccount = () => {
   const [ firstName, setFirstName] = useState('');
   const { textInputs, setTextInput } = useTextInputContext();
  
-
+  const handleInputChange = (name, value) => {
+    setTextInput(name, value);
+  };
+  
   const signup = async () => {
     // Check if passwords match
     if (textInputs.password !== textInputs.confirmPassword) {
@@ -75,9 +78,7 @@ const CreateAccount = () => {
     }
   };
 
-  const handleInputChange = (name, value) => {
-    setTextInput(name, value);
-  };
+  
 
   return (
     <ScrollView

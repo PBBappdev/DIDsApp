@@ -23,7 +23,7 @@ import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 import { firebaseApp, auth } from "../firebase";
 import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
 import firestore from '@react-native-firebase/firestore';
-import { getFirestore, doc, getDoc, limit, startAfter, setDoc, deleteDoc, updateDoc, addDoc, collection, query, where, getDocs, QueryStartAtConstraint } from "firebase/firestore";
+import { getFirestore, doc, getDoc, limit, startAfter, setDoc, deleteDoc, updateDoc, addDoc, collection, query, where, getDocs, orderBy, QueryStartAtConstraint } from "firebase/firestore";
 
 
 const Meetings1 = () => {
@@ -33,7 +33,7 @@ const Meetings1 = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      await fetchMeetings(); // Assuming fetchMeetings() is your function to fetch meetings from the database
+      await fetchMeetings(pageSize, lastDoc); // Assuming fetchMeetings() is your function to fetch meetings from the database
     } catch (error) {
       console.error('Error refreshing data:', error);
     }
@@ -123,7 +123,8 @@ const [day, setDay] = useState('');
  const database = getFirestore(firebaseApp);
  const meetingRef = collection(database, "Meetings");
  const [meetingsData, setMeetingsData] = useState([]);
-
+ const pageSize = 10; // Adjust the page size as needed
+ const lastDoc = null; // Initially, there's no last document
  
  const fetchMeetings = async (pageSize, lastDoc) => {
   try {
@@ -136,26 +137,41 @@ const [day, setDay] = useState('');
 
     const userRef = doc(database, "Users", user.uid);
     const userMeetingsRef = collection(userRef, "SavedMeetings");
-
     const userMeetingsSnapshot = await getDocs(userMeetingsRef);
-    const savedMeetingsIds = userMeetingsSnapshot.docs.map(doc => doc.id);
+    const savedMeetingsIds = userMeetingsSnapshot.docs.map((doc) => doc.id);
 
-    let meetingsQuery = query(meetingRef);
+    const today = new Date();
+    const currentDay = today.getDate() - 1;
+    const currentMonth = today.getMonth() + 1; // Months are zero-based
+    const currentYear = today.getFullYear();
+    const formattedToday = `${currentDay}/${currentMonth}/${currentYear}`;
 
-if (lastDoc) {
-  meetingsQuery = query(meetingsQuery, startAfter(lastDoc));
-}
+    let meetingsQuery = query(meetingRef, where("date", ">=", formattedToday), orderBy("date"));
+    console.log(meetingsQuery);
+    // if (lastDoc) {
+    //   meetingsQuery = query(meetingsQuery, startAfter(lastDoc), limit(10));
+    // }
 
-meetingsQuery = query(meetingsQuery, limit(pageSize));
+    // meetingsQuery = query(meetingsQuery, limit(pageSize)); // Apply pagination limit
 
-const meetingsSnapshot = await getDocs(meetingsQuery);
+    const meetingsSnapshot = await getDocs(meetingsQuery);
 
     const newMeetingsData = [];
     const allMeetingsData = [];
 
     meetingsSnapshot.forEach((doc) => {
       const meeting = doc.data();
-      if (savedMeetingsIds.includes(doc.id)) {
+      const meetingDateParts = meeting.date.split("-");
+      const meetingDay = parseInt(meetingDateParts[0]);
+      const meetingMonth = parseInt(meetingDateParts[1]);
+      const meetingYear = parseInt(meetingDateParts[2]);
+      const meetingDate = `${meetingDay}/${meetingMonth}/${meetingYear}`;
+      console.log("Parsed Date:", meetingDate);
+      console.log(meetingDay);
+      console.log(formattedToday);
+      console.log(meetingDate);
+
+      if (meetingDate >= formattedToday) {
         const newMeeting = {
           id: doc.id,
           location: meeting.suburb,
@@ -166,62 +182,23 @@ const meetingsSnapshot = await getDocs(meetingsQuery);
           address: meeting.address,
           description: meeting.description,
         };
-        // Check if the meeting already exists in savedGroups array
-        if (!savedGroups.some(existingMeeting => existingMeeting.id === newMeeting.id)) {
+
+        if (savedMeetingsIds.includes(doc.id)) {
           newMeetingsData.push(newMeeting);
         }
+
+        allMeetingsData.push(newMeeting);
       }
-      const allMeeting = {
-        id: doc.id,
-        location: meeting.suburb,
-        day: meeting.day,
-        date: meeting.date,
-        time: meeting.time,
-        state: meeting.state,
-        address: meeting.address,
-        description: meeting.description,
-      };
-      allMeetingsData.push(allMeeting);
     });
 
-    // Sort newMeetingsData array by date
-    newMeetingsData.sort((a, b) => {
-      const dateA = new Date(
-        parseInt(a.date.substring(6, 10)), // Year
-        parseInt(a.date.substring(3, 5)) - 1, // Month (zero-based)
-        parseInt(a.date.substring(0, 2)) // Day
-      );
-      const dateB = new Date(
-        parseInt(b.date.substring(6, 10)), // Year
-        parseInt(b.date.substring(3, 5)) - 1, // Month (zero-based)
-        parseInt(b.date.substring(0, 2)) // Day
-      );
-      return dateA - dateB;
-    });
-
-    // Update the existing savedGroups state with only newMeetingsData
-    setSavedGroups(prevState => [...prevState, ...newMeetingsData]);
-
-    // Similarly, update the allGroups state with only newMeetingsData
-    setAllGroups(prevState => [...prevState, ...allMeetingsData]);
+    setSavedGroups(newMeetingsData);
+    setAllGroups(allMeetingsData);
 
     return meetingsSnapshot.docs[meetingsSnapshot.docs.length - 1]; // Return the last document for pagination
-
-    } catch (error) {
-      console.error('Error fetching meetings:', error);
-    }
-  };
-  //fethmeetings
-  useEffect(() => {
-    const pageSize = 10; // Adjust the page size as needed
-    let lastDoc = null;
-  
-    fetchMeetings(pageSize, lastDoc)
-      .then(lastDocument => {
-        lastDoc = lastDocument;
-      })
-      .catch(error => console.error('Error fetching meetings:', error));
-  }, [savedGroups]); // Add savedGroups as a dependency
+  } catch (error) {
+    console.error("Error fetching meetings:", error);
+  }
+};
 
 
 
@@ -247,6 +224,23 @@ useEffect(() => {
   );
   setFilteredAllGroups(filteredAllGroups);
 }, [searchInput, savedGroups, allGroups]);
+
+useEffect(() => {
+  const pageSize = 10; // Adjust the page size as needed
+
+  const fetchInitialMeetings = async () => {
+    try {
+      const lastDocument = await fetchMeetings(pageSize, lastDoc);
+      //console.log(savedGroups);
+      setRefreshing(false);
+    } catch (error) {
+      console.error('Error fetching initial meetings:', error);
+      setRefreshing(false);
+    }
+  };
+
+  fetchInitialMeetings();
+}, []);
 
 
 
@@ -275,6 +269,7 @@ const saveMeeting = async (meetingId) => {
       });
       
       console.log("Meeting saved successfully!");
+      onRefresh();
     } else {
       console.log("User document not found.");
     }
@@ -299,6 +294,7 @@ const removeMeeting = async (meetingId) => {
     await deleteDoc(doc(userMeetingsRef, meetingId));
 
     console.log("Meeting removed successfully!");
+    onRefresh();
   } catch (error) {
     console.error("Error removing meeting:", error);
   }
@@ -455,13 +451,16 @@ const removeMeeting = async (meetingId) => {
                 state: meeting.state,
                 address: meeting.address,
                 description: meeting.description,
+                location: meeting.location,
+                meetingId: meeting.id,
+                saveState: true,
               })}
             >
               <Text style={[styles.locationText, styles.locationTextLayout]} numberOfLines={1}>
-              {meeting.location} - { meeting.day}
+              {meeting.location}- { meeting.day}
               </Text>
               <Text style={[styles.text, styles.textLayout1]} numberOfLines={1}>
-              {meeting.date} - {meeting.time}
+              {" "}{meeting.date} -{meeting.time}
               </Text>
               <Pressable  
                 style={[styles.Icon, styles.iconLayout]}
@@ -491,16 +490,28 @@ const removeMeeting = async (meetingId) => {
         </Text>
         <View style={styles.frameParent}>
         {filteredAllGroups.map((meeting, index) => (
-            <Pressable
-              key={index}
-              style={styles.tuesdayParentLayout}
-              onPress={() => navigation.navigate("MeetingInfo")}
-            >
+           <Pressable
+           key={index}
+           style={styles.tuesdayParentLayout}
+           onPress={() => navigation.navigate("MeetingInfo", {
+             //address: meeting.address,
+             day: meeting.day,
+             date: meeting.date,
+             time: meeting.time,
+             state: meeting.state,
+             address: meeting.address,
+             description: meeting.description,
+             location: meeting.location,
+             meetingId: meeting.id,
+             saveState: false,
+             
+           })}
+         >
               <Text style={[styles.locationText, styles.locationTextLayout]}>
-              {meeting.location} - { meeting.day}
+              {meeting.location}- { meeting.day}
               </Text>
               <Text style={[styles.text, styles.textLayout1]}>
-              {meeting.date} - {meeting.time}
+              {" "}{meeting.date} -{meeting.time}
               </Text>
               <Pressable  
                 style={[styles.Icon, styles.iconLayout]}
