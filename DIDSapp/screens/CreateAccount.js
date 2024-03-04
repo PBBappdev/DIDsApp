@@ -6,6 +6,7 @@ import {
   View,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Image } from "expo-image";
 import { TextInput as RNPTextInput } from "react-native-paper";
@@ -19,13 +20,20 @@ import { getFirestore, addDoc, collection, doc, setDoc, query, where, getDocs } 
 
 const CreateAccount = () => {
   const navigation = useNavigation();
-  const [ firstName, setFirstName] = useState('');
+  const [ firstName, setFirstName] = useState("");
+  const [ emailAddress, setEmailAddress] = useState("");
   const { textInputs, setTextInput } = useTextInputContext();
  
   const handleInputChange = (name, value) => {
     setTextInput(name, value);
   };
   
+  function isValidEmail(email) {
+    // Regular expression for validating email addresses
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
   const signup = async () => {
     // Check if passwords match
     if (textInputs.password !== textInputs.confirmPassword) {
@@ -40,17 +48,68 @@ const CreateAccount = () => {
       return;
     }
 
-    //create user account
-    try {
-      const { user } = await createUserWithEmailAndPassword(auth, textInputs.emailAddress, textInputs.password)
-      addUser();
-      console.log(user)
-      
-      navigation.navigate("CreateProfile")
-    } catch ({message}) {
-      alert("Cannot create account. Please check login details")
-      console.log(user)
+    console.log(emailAddress);
+    console.log(firstName);
+
+    if(firstName !== "" && emailAddress !== "")
+    {
+      if (isValidEmail(emailAddress))
+      {
+      //create user account
+      try {
+        const { user } = await createUserWithEmailAndPassword(auth, emailAddress, textInputs.password)
+        addUser();
+        console.log(user)
+        
+        navigation.navigate("CreateProfile")
+      } catch ({message}) {
+        Alert.alert(
+          'Cannot Create Account',
+          'Please try other login credentials',
+          [
+            {
+              text: 'OK',
+              onPress: () => console.log('OK Pressed'),
+              style: 'cancel',
+            },
+          ],
+          { cancelable: true }
+        );
+        //alert("Cannot create account. Please check login details")
+        console.log(user)
+      }
     }
+    else
+    {
+      Alert.alert(
+        'Email Is Invalid',
+        'Please try other login credentials',
+        [
+          {
+            text: 'OK',
+            onPress: () => console.log('OK Pressed'),
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+    }
+    else{
+      Alert.alert(
+        'Missing Answer(s)',
+        'Please answer all questions marked with ( * )',
+        [
+          {
+            text: 'OK',
+            onPress: () => console.log('OK Pressed'),
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+
   };
   
   const database = getFirestore(firebaseApp);
@@ -62,7 +121,7 @@ const CreateAccount = () => {
       const userObj = { 
         fName: firstName,
         lName: textInputs.lastName, 
-        email: textInputs.emailAddress, 
+        email: emailAddress,
         userID: user
       };
 
@@ -138,8 +197,8 @@ const CreateAccount = () => {
           placeholder="Email"
           mode="outlined"
           placeholderTextColor="#c4ced3"
-          value={textInputs.emailAddress}
-          onChangeText={(value) => handleInputChange('emailAddress', value)}
+          value={emailAddress}
+          onChangeText={setEmailAddress}
           activeOutlineColor="#fbb042"
           theme={{
             fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
@@ -159,6 +218,7 @@ const CreateAccount = () => {
             fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
+          secureTextEntry
         />
         <RNPTextInput
           style={[styles.frameItem, styles.frameLayout]}
@@ -173,6 +233,7 @@ const CreateAccount = () => {
             fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
             colors: { text: "#000000" },
           }}
+          secureTextEntry
         />
       </View>
       <View style={styles.frame2}>

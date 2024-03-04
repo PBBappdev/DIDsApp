@@ -91,7 +91,7 @@ const CreateProfile = () => {;
       </View>
       <View style={styles.switchFormat}>
       <Text style={[styles.meetingReminders, styles.createAccountTypo]}>
-            Indigenous / First Nations
+            Indigenous / First Nations *
           </Text>
           <View style={styles.switchContainer}>
         <Switch
@@ -113,7 +113,7 @@ const CreateProfile = () => {;
         </View>
         <View style={styles.switchFormat}>
           <Text style={[styles.meetingReminders, styles.createAccountTypo]}>
-            Native Lanuage is English 
+            Native Lanuage is English *
           </Text>
           <View style={styles.switchContainer}>
             <Switch
@@ -136,7 +136,7 @@ const CreateProfile = () => {;
         
         <View >
           <Text style={[styles.countryOfBirthContainer]}>
-              Country of Birth:  {countryName}
+              * Country of Birth:  {countryName}
           </Text>
         </View>
       <View style={styles.phoneInputContainer}>

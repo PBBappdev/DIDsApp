@@ -7,7 +7,10 @@ import {
   Pressable,
   TouchableOpacity,
   Platform,
+  Alert,
+  
 } from "react-native";
+import { Picker } from "@react-native-picker/picker"
 import { Image } from "expo-image";
 import { TextInput as RNPTextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
@@ -19,16 +22,20 @@ import { set } from "react-native-reanimated";
 import { firebaseApp, auth } from "../firebase";
 import { getAuth,  initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence, deleteUser} from "firebase/auth";
 import { getFirestore, addDoc, collection, doc, setDoc, query, where, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
+import DropDownPicker from 'react-native-dropdown-picker';
 
 
 
 const CreateProfile = () => {;
   const navigation = useNavigation();
+  const [open, setOpen] = useState(false);
   const { textInputs, setTextInput } = useTextInputContext();
+  const [selectedGender, setSelectedGender] = useState("");
 
   const handleInputChange = (name, value) => {
     setTextInput(name, value);
   };
+
 
 
   //dob components
@@ -54,9 +61,32 @@ const CreateProfile = () => {;
     }
   }
 
+  const checkAnswered = async () => {
+
+    if (phoneNumber !== "" && countryCode !== "" && selectedGender !== "" && textInputs.postcode !== undefined) {
+      addUser();
+    } else {
+      Alert.alert(
+        'Missing Answer(s)',
+        'Please answer questions marked with a ( * )',
+        [
+          {
+            text: 'OK',
+            onPress: () => console.log('OK Pressed'),
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   //phone number
-  const [phoneNumber, setPhoneNumber] = useState(''); 
-  const [countryCode, setCountryCode] = useState('au'); 
+  const [phoneNumber, setPhoneNumber] = useState(""); 
+  const [countryCode, setCountryCode] = useState("au"); 
+
+  
+
 
   //push to db
   const database = getFirestore(firebaseApp);
@@ -67,7 +97,7 @@ const CreateProfile = () => {;
       const userObj = { 
         phoneNumber: phoneNumber,
         phoneCountrycode: countryCode,
-        gender: textInputs.gender, 
+        gender: selectedGender, 
         postcode: textInputs.postcode, 
         DoB: dateOfBirth,
       };
@@ -155,7 +185,7 @@ const removeUserDetails = async () => {
             console.log("Selected country code:", selectedCountryCode);
             setCountryCode(selectedCountryCode);
           }}
-          style={{ borderWidth: 1, borderRadius: 5 }}
+          style={{ borderWidth: 1, borderRadius: 5, borderColor: 'black', backgroundColor: "rgba(246,246,246,255)" }}
           textStyle={{ fontSize: 16, color: 'blue' }}
           containerStyle={{ width: "100%"}}
           flagButtonStyle={{ backgroundColor: 'lightgray' }}
@@ -163,6 +193,7 @@ const removeUserDetails = async () => {
       </View>
         <RNPTextInput
           style={[styles.frameItem, styles.frameLayout]}
+          keyboardType="numeric"
           label="Postcode*"
           mode="outlined"
           placeholderTextColor="#c4ced3"
@@ -174,22 +205,32 @@ const removeUserDetails = async () => {
             colors: { text: "#000000" },
           }}
         />
-        <RNPTextInput
-          style={[styles.frameItem, styles.frameLayout]}
-          label="Gender*"
-          mode="outlined"
-          placeholderTextColor="#c4ced3"
-          activeOutlineColor="#fbb042"
-          value={textInputs.gender}
-          onChangeText={(value) => handleInputChange('gender', value)}
-          theme={{
-            fonts: { regular: { fontFamily: FontFamily.PTSans, fontWeight: "Bold" } },
-            colors: { text: "#000000" },
+        <DropDownPicker
+          items={[
+            {label: 'Male', value: 'male'},
+            {label: 'Female', value: 'female'},
+            {label: 'Other', value: 'other'},
+          ]}
+          placeholder="Gender *"
+          open={open}
+          setOpen={setOpen}
+          value={selectedGender}
+          setValue={setSelectedGender}
+          //containerStyle={{height: 50}}
+          style={[styles.frameItem, styles.frameLayout, styles.picker]}
+          dropDownContainerStyle={{
+            width: '90%',
+            }}
+          itemSeparatorStyle={{
+           
           }}
+          dropDownStyle={{backgroundColor: '#fafafa'}}
+          onChangeItem={(items) => setSelectedGender(items.value)}
         />
 
         {showPicker && (
           <DateTimePicker
+          keyboardType="numeric"
           mode='date'
           display="spinner"
           value={date}
@@ -237,7 +278,7 @@ const removeUserDetails = async () => {
           style={[styles.continueWrapper, styles.continueWrapperPosition]}
           activeOpacity={0.7}
           //onPress={() => navigation.navigate("LanuageSelect")}
-          onPress={addUser}
+          onPress={checkAnswered}
         >
           <Text style={styles.continue}>Continue</Text>
         </TouchableOpacity>
@@ -253,6 +294,17 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: '#ccc', 
 }, 
+picker: {
+  width: '90%',
+  marginBottom: 10,
+ // height: 50,
+  position: 'relative',
+  borderRadius: 5,
+  borderWidth: 1,
+  borderColor: '#black',
+  backgroundColor: '#f6f6f6', // Background color of the picker
+},
+
   createProfileScrollViewContent: {
     flexDirection: "column",
     alignItems: "center",
@@ -297,7 +349,7 @@ const styles = StyleSheet.create({
     marginTop: "5%",
     fontFamily: FontFamily.PTSansCaption,
     height: 40,
-    width: "85%",
+    //width: "90%",
     alignItems: "center",
     fontSize: FontSize.size_13xl,
   },
@@ -305,20 +357,9 @@ const styles = StyleSheet.create({
     marginTop: 14,
     width: "85%",
   },
-  wrapper: {
-    width: "20%",
-  },
-  frameChild: {
-    width: "62%",
-    marginLeft: "3%",
-  },
-  frameGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   frameItem: {
     marginTop: "5%",
-    width: "85%",
+    width: "90%",
   },
   frameLayout: {
     height: 72,
@@ -362,13 +403,13 @@ const styles = StyleSheet.create({
   },
   mandatoryInformationParent: {
     height: 126,
-    width: "85%",
+    width: "90%",
     marginTop: "2%",
   },
   createprofile: {
     backgroundColor: Color.colorWhite,
     flex: 1,
-    paddingLeft: 20,
+    paddingLeft: 28,
     maxWidth: "100%",
     width: "100%",
   },

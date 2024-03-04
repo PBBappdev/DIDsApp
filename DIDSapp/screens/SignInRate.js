@@ -1,57 +1,149 @@
 import React, { useState } from "react";
-import { StatusBar, StyleSheet, Text, Pressable, View } from "react-native";
+import { StatusBar, StyleSheet, Text, Pressable, View, Linking, Alert } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RadioGroup, Radio } from "@ui-kitten/components";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import { firebaseApp, auth } from "../firebase";
+import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
+import firestore from '@react-native-firebase/firestore';
+import { getFirestore, doc, getDoc, limit, startAfter, setDoc, deleteDoc, updateDoc, addDoc, collection, query, where, getDocs, orderBy, QueryStartAtConstraint } from "firebase/firestore";
 
-const SignInRate = () => {
-  const [frameRadioselectedIndex, setFrameRadioselectedIndex] =
-    useState(undefined);
+const SignInRate = ({route}) => {
+  const { location, day, date, time, state, address, description, meetingId, confidentiality, docID} = route.params;
+
+  const [frameRadioselectedIndex, setFrameRadioselectedIndex] = useState(undefined); //rating selection
+  const [rate, setRating] = useState(undefined);
+
+  const handleRating = (value) => {
+    setFrameRadioselectedIndex(value);
+    setRating(value + 1);
+  }
+
   const navigation = useNavigation();
+
+ 
+  const database = getFirestore(firebaseApp);
+
+  const checkAnswered = async () => {
+
+    if (frameRadioselectedIndex != undefined)
+    {
+        
+      try {
+        const docRef = collection(database, 'SignIn') 
+  
+        await updateDoc(doc(docRef, docID),{
+          rate: rate,
+        });
+        console.log('Document written with ID: ', docRef);
+  
+        navigation.navigate("SignInMain", {
+          day: day,
+          date: date,
+          time: time,
+          state: state,
+          address: address,
+          description: description,
+          location: location,
+          meetingId: meetingId,
+          confidentiality: confidentiality,
+        });
+      } catch (error) {
+        console.error('Error adding document: ', error);
+      }
+    } else {
+      Alert.alert(
+        'Missing Answer(s)',
+        'Please provide a rating',
+        [
+          {
+            text: 'OK',
+            onPress: () => console.log('OK Pressed'),
+            style: 'cancel',
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
 
   return (
     <View style={styles.signinrate}>
       <StatusBar style={styles.viewPosition} barStyle="default" />
+      <SafeAreaView style={[styles.parentHeader]}>
+      <View style={styles.view}>
+        <Pressable
+          style={styles.backArrow}
+          onPress={() =>
+            navigation.navigate("SignInQuestions", {
+              day: day,
+              date: date,
+              time: time,
+              state: state,
+              address: address,
+              description: description,
+              location: location,
+              meetingId: meetingId,         
+            })}
+        >
+          <Image
+            style={styles.icon}
+            contentFit="cover"
+            source={require("../assets/back-arrow.png")}
+          />
+        </Pressable>
+        
+        <Text style={[styles.gosfordThursday, styles.textFlexBox2]}>
+          {location}, {day}
+        </Text>
+        <Text style={[styles.text, styles.textFlexBox2]}> {date} -{time}</Text>
+      </View>
+      </SafeAreaView>
+
       <Image
         style={styles.signinrateChild}
         contentFit="cover"
         source={require("../assets/line-6.png")}
       />
       <Text
-        style={[styles.gosfordNararaCommunity, styles.pleaseRateTheFlexBox]}
+        style={styles.locationText}
       >
-        Gosford Narara Community center 2 pandala Rd, Narara NSW 2250
+        {address}
       </Text>
-      <Text style={styles.rate}>Rate</Text>
-      <Text style={styles.map}>Map</Text>
-      <Text style={[styles.pleaseRateThe, styles.parentLayout]}>
-        Please rate the group after it is over
-      </Text>
+      
       <Pressable
-        style={[styles.submitWrapper, styles.parentLayout]}
+        style={[styles.map, styles.mapTypo]}
         onPress={() =>
-          navigation.navigate("BottomTabsRoot", { screen: "SignInMain" })
+          Linking.openURL(
+            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+          )
         }
       >
-        <Text style={[styles.submit, styles.submitTypo]}>Submit</Text>
+        <Text style={styles.map1}>Map</Text>
       </Pressable>
-      <View style={[styles.iFoundTheGroupHelpfulParent, styles.parentLayout]}>
-        <Text style={[styles.iFoundThe, styles.submitTypo]}>
+      <Text style={styles.rate}>Rate</Text>
+      <Text style={[styles.pleaseRateThe, styles.parentLayout]}>
+        Please rate the group after the meeting is over
+      </Text>
+      
+      <View style={[styles.neutralIDontKnowParent, styles.parentSpaceBlock]}>
+          <Text style={styles.neutralI}>3 = neutral / I don’t know</Text>
+          <Text style={[styles.stronglyDisagree, styles.stronglyPosition]}>
+            1= Strongly disagree
+          </Text>
+          <Text style={[styles.stronglyAgree, styles.stronglyPosition]}>
+            5 = Strongly agree
+          </Text>
+        </View>
+        <Text style={[styles.inTheLast, styles.theTypo]}>
           I found the group helpful
         </Text>
-        <Text style={styles.neutralI}>3 = neutral / I don’t know</Text>
-        <Text style={[styles.stronglyDisagree, styles.stronglyPosition]}>
-          Strongly disagree
-        </Text>
-        <Text style={[styles.stronglyAgree, styles.stronglyPosition]}>
-          Strongly agree
-        </Text>
         <RadioGroup
-          style={[styles.parent, styles.parentLayout]}
+          style={[styles.parent, styles.parentSpaceBlock]}
           selectedIndex={frameRadioselectedIndex}
-          onChange={setFrameRadioselectedIndex}
+          onChange={index => handleRating(index)}
         >
           <Radio>{() => <Text style={styles.frameRadioText}> 1</Text>}</Radio>
           <Radio>{() => <Text style={styles.frameRadioText}> 2</Text>}</Radio>
@@ -59,12 +151,61 @@ const SignInRate = () => {
           <Radio>{() => <Text style={styles.frameRadioText}> 4</Text>}</Radio>
           <Radio>{() => <Text style={styles.frameRadioText}> 5</Text>}</Radio>
         </RadioGroup>
-      </View>
+      <Pressable
+        style={[styles.submitWrapper, styles.parentLayout]}
+        onPress={() => 
+          checkAnswered()
+        }
+      >
+        <Text style={[styles.submit, styles.submitTypo]}>Submit</Text>
+      </Pressable>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  parentHeader: {
+    backgroundColor: Color.colorGoldenrod_100,
+    width: '100%',
+  },
+  view: {
+    height: 81,
+    position: 'relative',
+  },
+  backArrow: {
+    left: 23,
+    top: 19,
+    width: 40,
+    height: 40,
+    position: "absolute",
+  },
+  icon: {
+    width: "100%",
+    height: "100%",
+  },
+  gosfordThursday: {
+    top: 13,
+    left: 89,
+    fontSize: FontSize.size_7xl,
+    fontWeight: "700",
+    fontFamily: FontFamily.PTSansCaptionBold,
+  },
+  textFlexBox2: {
+    textAlign: "left",
+    color: Color.colorBlack,
+    lineHeight: 32,
+    position: "absolute",
+  },
+  text: {
+    top: 39,
+    left: 90,
+    fontSize: FontSize.size_4xl,
+    fontFamily: FontFamily.PTSansCaption,
+    display: "flex",
+    alignItems: "center",
+    width: 220,
+    height: 31,
+  },
   wrapper: {
     backgroundColor: "#fbb042",
   },
@@ -77,9 +218,9 @@ const styles = StyleSheet.create({
     padding: 52.25,
   },
   viewPosition: {
-    width: 390,
+    width: "100%",
     left: 0,
-    position: "absolute",
+    position: "relative",
   },
   pleaseRateTheFlexBox: {
     display: "flex",
@@ -87,18 +228,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     textAlign: "left",
     fontFamily: FontFamily.pTSansRegular,
-    lineHeight: 22,
+    //lineHeight: 30,
   },
   parentLayout: {
-    width: 334,
-    position: "absolute",
+    width: "85%",
+    position: "relative",
+    //right: 20,
   },
-  submitTypo: {
-    fontFamily: FontFamily.pTSansBold,
-    fontWeight: "700",
+  pleaseRateThe: {
+    marginTop: 10,
+    fontSize: FontSize.size_lg,
+    left: 28,
+    maxWidth: "100%",
+    alignItems: "center",
+    display: "flex",
     color: Color.colorBlack,
-    lineHeight: 22,
-    position: "absolute",
+    textAlign: "left",
+    fontFamily: FontFamily.pTSansRegular,
+    //lineHeight: 24,
   },
   stronglyPosition: {
     top: 51,
@@ -112,26 +259,30 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   signinrateChild: {
-    top: 245,
+    marginTop: 0,
     maxHeight: "100%",
-    width: 345,
+    width: "100%",
     left: 22,
-    position: "absolute",
+    position: "relative",
   },
-  gosfordNararaCommunity: {
-    top: 153,
-    height: 74,
-    alignItems: "center",
-    fontSize: FontSize.size_5xl,
+  locationText: {
+    marginTop: 10,
+    fontSize: FontSize.size_3xl,
+    lineHeight: 29,
+    height: 60,
+    textAlign: "left",
+    fontFamily: FontFamily.PTSansRegular,
+    display: "flex",
     color: Color.colorBlack,
-    width: 345,
+    right: 22,
+    width: "85%",
     left: 22,
-    position: "absolute",
+    position: "relative",
   },
   rate: {
-    top: 248,
+    marginTop: 20,
     left: 147,
-    width: 95,
+    width: 87,
     height: 43,
     justifyContent: "center",
     textAlign: "center",
@@ -140,52 +291,54 @@ const styles = StyleSheet.create({
     alignItems: "center",
     display: "flex",
     color: Color.colorBlack,
-    lineHeight: 22,
-    position: "absolute",
+    lineHeight: 40,
+    position: "relative",
   },
-  map: {
-    top: 201,
-    left: 313,
-    textDecoration: "underline",
+  map1: {
+    //textDecoration: "underline",
     color: Color.colorCornflowerblue,
     textAlign: "left",
     fontFamily: FontFamily.pTSansRegular,
     lineHeight: 22,
     fontSize: FontSize.size_5xl,
-    position: "absolute",
   },
-  pleaseRateThe: {
-    top: 295,
-    fontSize: FontSize.size_lg,
-    left: 28,
-    width: 334,
-    alignItems: "center",
-    display: "flex",
-    color: Color.colorBlack,
+  mapTypo: {
+    fontSize: FontSize.size_5xl,
+    lineHeight: 30,
     textAlign: "left",
-    fontFamily: FontFamily.pTSansRegular,
-    lineHeight: 22,
-    height: 35,
+    fontFamily: FontFamily.PTSansRegular,
+    position: "relative",
+  },
+  map: {
+    textDecoration: "underline",
+    color: Color.colorCornflowerblue,
+    position: 'relative',
+    left: 22,
+    marginTop: 10,
+  },
+  submitTypo: {
+    fontFamily: FontFamily.pTSansBold,
+    fontWeight: "700",
+    color: Color.colorBlack,
+    //lineHeight: 22,
+    position: "relative",
   },
   submit: {
-    bottom: 19,
-    left: 133,
+    bottom: -12,
+    left: 0,
+    width: "100%",
     fontSize: FontSize.size_3xl,
     textAlign: "center",
     fontFamily: FontFamily.pTSansBold,
   },
   submitWrapper: {
-    top: 597,
-    left: 36,
+    marginTop: 10,
+    width: "100%",
+    left: 28,
     borderRadius: Border.br_3xs,
     height: 60,
     backgroundColor: Color.colorGoldenrod_100,
-  },
-  iFoundThe: {
-    fontSize: FontSize.title3Bold_size,
-    textAlign: "left",
-    left: 0,
-    top: 0,
+    position: 'relative',
   },
   neutralI: {
     top: 31,
@@ -219,19 +372,132 @@ const styles = StyleSheet.create({
     alignItems: "center",
     left: 0,
   },
-  iFoundTheGroupHelpfulParent: {
-    top: 351,
-    height: 125,
-    left: 28,
-    width: 334,
-  },
   signinrate: {
     backgroundColor: Color.colorWhite,
     flex: 1,
-    height: 844,
+    height: "100%",
     overflow: "hidden",
     width: "100%",
   },
+  parentHeader: {
+    backgroundColor: Color.colorGoldenrod_100,
+    width: '100%',
+  },
+  view: {
+    height: 81,
+    position: 'relative',
+  },
+  backArrow: {
+    left: 23,
+    top: 19,
+    width: 40,
+    height: 40,
+    position: "absolute",
+  },
+  icon: {
+    width: "100%",
+    height: "100%",
+  },
+  gosfordThursday: {
+    top: 13,
+    left: 89,
+    fontSize: FontSize.size_7xl,
+    fontWeight: "700",
+    fontFamily: FontFamily.PTSansCaptionBold,
+  },
+  textFlexBox2: {
+    textAlign: "left",
+    color: Color.colorBlack,
+    lineHeight: 32,
+    position: "absolute",
+  },
+  text: {
+    top: 39,
+    left: 90,
+    fontSize: FontSize.size_4xl,
+    fontFamily: FontFamily.PTSansCaption,
+    display: "flex",
+    alignItems: "center",
+    width: 220,
+    height: 31,
+  },
+  frameRadioText: {
+    fontSize: 14,
+  },
+  parentSpaceBlock: {
+    marginTop: 22,
+    width: "85%",
+    left: 28,
+    right: 22,
+  },
+  stronglyPosition: {
+    top: 23,
+    height: 20,
+    fontFamily: FontFamily.pTSansRegular,
+    fontSize: FontSize.size_base,
+    alignItems: "center",
+    display: "flex",
+    color: Color.colorBlack,
+    //lineHeight: 25,
+    position: "absolute",
+  },
+  theTypo: {
+    fontFamily: FontFamily.pTSansBold,
+    fontWeight: "700",
+    color: Color.colorBlack,
+    lineHeight: 22,
+  },
+  neutralI: {
+    left: 76,
+    width: 189,
+    height: 20,
+    fontFamily: FontFamily.pTSansRegular,
+    fontSize: FontSize.size_base,
+    justifyContent: "center",
+    textAlign: "center",
+    alignItems: "center",
+    display: "flex",
+    color: Color.colorBlack,
+    lineHeight: 22,
+    top: 0,
+    position: "absolute",
+  },
+  stronglyDisagree: {
+    width: 147,
+    textAlign: "left",
+    top: 23,
+    left: 0,
+  },
+  stronglyAgree: {
+    left: 202,
+    textAlign: "right",
+    width: 132,
+  },
+  neutralIDontKnowParent: {
+    height: 46,
+    left: 28,
+  },
+  inTheLast: {
+    height: 25,
+    fontSize: FontSize.title3Bold_size,
+    fontFamily: FontFamily.pTSansBold,
+    marginTop: 22,
+    left: 28,
+    width: "90%",
+    alignItems: "center",
+    display: "flex",
+    textAlign: "left",
+  },
+  parent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+ 
+ 
+
+ 
 });
 
 export default SignInRate;

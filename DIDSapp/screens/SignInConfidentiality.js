@@ -6,30 +6,62 @@ import {
   Pressable,
   View,
   Linking,
+  SafeAreaView,
 } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontSize, FontFamily, Border } from "../GlobalStyles";
+import { firebaseApp, auth } from "../firebase";
+import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
+import firestore from '@react-native-firebase/firestore';
+import { getFirestore, doc, getDoc, limit, startAfter, setDoc, deleteDoc, updateDoc, addDoc, collection, query, where, getDocs, orderBy, QueryStartAtConstraint } from "firebase/firestore";
 
-const SignInConfidentiality = () => {
+
+const SignInConfidentiality = ({route}) => {
   const navigation = useNavigation();
+  const { location, day, date, time, state, address, description, meetingId, saveState} = route.params;
+  const locationText = address;
 
+  const database = getFirestore(firebaseApp);
+
+  
   return (
     <View style={styles.signinconfidentiality}>
       <StatusBar style={styles.statusBarPosition} barStyle="default" />
+      <SafeAreaView style={[styles.parent]}>
+      <View style={styles.view}>
+        <Pressable
+          style={styles.backArrow}
+          onPress={() =>
+            navigation.navigate("BottomTabsRoot", { screen: "SignInMain" })
+          }
+        >
+          <Image
+            style={styles.icon}
+            contentFit="cover"
+            source={require("../assets/back-arrow.png")}
+          />
+        </Pressable>
+        
+        <Text style={[styles.gosfordThursday, styles.textFlexBox2]}>
+          {location}, {day}
+        </Text>
+        <Text style={[styles.text, styles.textFlexBox2]}> {date} -{time}</Text>
+      </View>
+    </SafeAreaView>
       <Image
         style={styles.signinconfidentialityChild}
         contentFit="cover"
         source={require("../assets/line-6.png")}
       />
-      <Text style={[styles.gosfordNararaCommunity, styles.gosfordFlexBox]}>
-        Gosford Narara Community center 2 pandala Rd, Narara NSW 2250
+      <Text style={[styles.locationText]}>
+        {address}
       </Text>
       <Pressable
-        style={styles.map}
+        style={[styles.map, styles.mapTypo]}
         onPress={() =>
           Linking.openURL(
-            "https://www.google.com/maps/place/37%C2%B053'55.1%22S+145%C2%B004'53.4%22E/@-37.898645,145.0789241,17z/data=!3m1!4b1!4m4!3m3!8m2!3d-37.898645!4d145.081499?entry=ttu"
+            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationText)}`
           )
         }
       >
@@ -44,9 +76,19 @@ const SignInConfidentiality = () => {
       </Text>
       <Pressable
         style={styles.signInToGroupWrapper}
-        onPress={() => navigation.navigate("SignInQuestions")}
+        onPress={() => navigation.navigate("SignInQuestions", {
+          day: day,
+          date: date,
+          time: time,
+          state: state,
+          address: address,
+          description: description,
+          location: location,
+          meetingId: meetingId,
+          confidentiality: true,         
+        })}
       >
-        <Text style={[styles.signInTo, styles.signInToTypo]}>
+        <Text style={[styles.signInTo]}>
           Sign in to group
         </Text>
       </Pressable>
@@ -61,6 +103,47 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorGoldenrod_100,
     position: "absolute",
   },
+  parent: {
+    backgroundColor: Color.colorGoldenrod_100,
+  },
+  textFlexBox2: {
+    textAlign: "left",
+    color: Color.colorBlack,
+    lineHeight: 32,
+    position: "absolute",
+  },
+  icon: {
+    width: "100%",
+    height: "100%",
+  },
+  backArrow: {
+    left: 23,
+    top: 19,
+    width: 40,
+    height: 40,
+    position: "absolute",
+  },
+  text: {
+    top: 39,
+    left: 90,
+    fontSize: FontSize.size_4xl,
+    fontFamily: FontFamily.PTSansCaption,
+    display: "flex",
+    alignItems: "center",
+    width: 220,
+    height: 31,
+  },
+  gosfordThursday: {
+    top: 13,
+    left: 89,
+    fontSize: FontSize.size_7xl,
+    fontWeight: "700",
+    fontFamily: FontFamily.PTSansCaptionBold,
+  },
+  view: {
+    width: "100%",
+    height: 81,
+  },
   gosfordFlexBox: {
     alignItems: "center",
     display: "flex",
@@ -70,7 +153,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.size_3xl,
     color: Color.colorBlack,
     lineHeight: 22,
-    position: "absolute",
+    position: "relative",
   },
   signinconfidentialityChild: {
     top: 249,
@@ -79,34 +162,46 @@ const styles = StyleSheet.create({
     left: 22,
     position: "absolute",
   },
-  gosfordNararaCommunity: {
-    top: 157,
-    height: 74,
-    color: Color.colorBlack,
-    lineHeight: 22,
+  locationText: {
+    marginTop: 10,
+    fontSize: FontSize.size_3xl,
+    lineHeight: 29,
+    height: 60,
+    textAlign: "left",
+    fontFamily: FontFamily.PTSansRegular,
     display: "flex",
-    position: "absolute",
-    fontFamily: FontFamily.pTSansRegular,
-    width: 345,
+    color: Color.colorBlack,
+    right: 22,
+    width: "85%",
     left: 22,
-    fontSize: FontSize.size_5xl,
+    position: "relative",
   },
   map1: {
-    textDecoration: "underline",
+    //textDecoration: "underline",
     color: Color.colorCornflowerblue,
     textAlign: "left",
     fontFamily: FontFamily.pTSansRegular,
     lineHeight: 22,
     fontSize: FontSize.size_5xl,
   },
+  mapTypo: {
+    fontSize: FontSize.size_5xl,
+    lineHeight: 30,
+    textAlign: "left",
+    fontFamily: FontFamily.PTSansRegular,
+    position: "relative",
+  },
   map: {
-    left: 313,
-    top: 205,
-    position: "absolute",
+    textDecoration: "underline",
+    color: Color.colorCornflowerblue,
+    position: 'relative',
+    left: 22,
+    marginTop: 10,
   },
   theInformationYou: {
-    top: 305,
+    marginTop: 30,
     height: 199,
+    position: 'relative',
     alignItems: "center",
     display: "flex",
     textAlign: "left",
@@ -118,8 +213,9 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.pTSansBold,
     textAlign: "center",
     fontWeight: "700",
-    left: 90,
-    top: 19,
+    fontSize: 24,
+    left: 5,
+    top: 13,
   },
   signInToGroupWrapper: {
     top: 567,

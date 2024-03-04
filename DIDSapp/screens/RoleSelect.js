@@ -7,7 +7,6 @@ import { Color, FontSize, FontFamily, Border } from "../GlobalStyles";
 //import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RadioGroup, Radio } from "@ui-kitten/components";
 import { firebaseApp, auth } from "../firebase";
-
 import { getAuth,  initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
 import { getFirestore, addDoc, collection, doc, setDoc, query, where, getDocs, updateDoc } from "firebase/firestore";
 
@@ -81,11 +80,18 @@ const RoleSelect = () => {
         </RadioGroup>
         <RadioGroup
           style={[styles.parent, styles.parentSpaceBlock]}
+          selectedIndex={selectedRole === "GuestProfessional" ? 0 : null}
+          onChange={(index) => handleRadioPress("GuestProfessional")}
+        >
+          <Radio status='warning' style={styles.radioText}>Guest Professional *</Radio>
+        </RadioGroup>
+        <RadioGroup
+          style={[styles.parent, styles.parentSpaceBlock]}
           selectedIndex={selectedRole === "Volunteer" ? 0 : null}
           onChange={(index) => handleRadioPress("Volunteer")}
           
         >
-          <Radio status='warning' style={styles.radioText}>Volunteer</Radio>
+          <Radio status='warning' style={styles.radioText}>Volunteer *</Radio>
         </RadioGroup>
         <RadioGroup
           style={[styles.parent, styles.parentSpaceBlock]}
@@ -93,7 +99,7 @@ const RoleSelect = () => {
           onChange={(index) => handleRadioPress("Staff")}
         >
          <Radio status='warning'>
-          <Text style={styles.radioText}>Staff</Text>
+          <Text style={styles.radioText}>Staff *</Text>
           </Radio>
         </RadioGroup>
       </View>
@@ -142,7 +148,7 @@ const styles = StyleSheet.create({
   },  
   parentSpaceBlock: {
     marginTop: 22,
-    width: 334,
+    //width: "100%",
   },
   parent: {
     flexDirection: "row",
@@ -152,7 +158,7 @@ const styles = StyleSheet.create({
   roleFlexBox: {
     alignItems: "center",
     display: "flex",
-    width: 334,
+    //width: "100%",
     textAlign: "left",
     lineHeight: 40,
   },

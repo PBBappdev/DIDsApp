@@ -23,9 +23,9 @@ const Helpline2 = () => {
       </Pressable>
       <Pressable
         style={[styles.liveChatWrapper, styles.wrapperLayout]}
-        onPress={() => {}}
+        onPress={() => { Linking.openURL("mailto:helpline@parentsbeyondbreakup.com");}}
       >
-        <Text style={[styles.liveChat, styles.liveChatTypo]}>Live Chat</Text>
+        <Text style={[styles.liveChat, styles.liveChatTypo]}>Email Us</Text>
       </Pressable>
       <StatusBar barStyle="default" />
     </View>
@@ -35,7 +35,7 @@ const Helpline2 = () => {
 const styles = StyleSheet.create({
   wrapperLayout: {
     height: 70,
-    width: 334,
+    width: "85%",
     borderRadius: Border.br_3xs,
     left: 28,
     position: "absolute",
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorWhite,
     flex: 1,
     width: "100%",
-    height: 844,
+    height: "100%",
     overflow: "hidden",
   },
 });

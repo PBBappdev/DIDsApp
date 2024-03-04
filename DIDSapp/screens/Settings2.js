@@ -67,7 +67,7 @@ const Settings2 = () => {
           style={[styles.notificationsWrapper, styles.wrapperLayout]}
           onPress={handleLogout}
         >
-          <Text style={[styles.changePassword, styles.changeTypo]}>
+          <Text style={[styles.logout, styles.changeTypo]}>
             Logout
           </Text>
         </Pressable>
@@ -109,6 +109,9 @@ const styles = StyleSheet.create({
   notifications: {
     left: 107,
   },
+  logout: {
+    left: 125,
+  },
   notificationsWrapper: {
     marginTop: 33,
   },
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: Color.colorWhite,
     flex: 1,
     width: "100%",
-    height: 844,
+    height: "100%",
     overflow: "hidden",
   },
 });

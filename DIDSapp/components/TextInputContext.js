@@ -5,7 +5,7 @@ const TextInputContext = createContext();
 
 export const TextInputProvider = ({ children }) => {
     const [textInputs, setTextInputs] = useState({
-      firstName: '',
+      firstName: "",
       lastName: '',
       emailAddress: '',
       password: '',

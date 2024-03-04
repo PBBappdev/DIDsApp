@@ -148,11 +148,11 @@ const [day, setDay] = useState('');
 
     let meetingsQuery = query(meetingRef, where("date", ">=", formattedToday), orderBy("date"));
     console.log(meetingsQuery);
-    // if (lastDoc) {
-    //   meetingsQuery = query(meetingsQuery, startAfter(lastDoc), limit(10));
-    // }
+     if (lastDoc) {
+       meetingsQuery = query(meetingsQuery, startAfter(lastDoc), limit(pageSize));
+     }
 
-    // meetingsQuery = query(meetingsQuery, limit(pageSize)); // Apply pagination limit
+     meetingsQuery = query(meetingsQuery, limit(pageSize)); // Apply pagination limit
 
     const meetingsSnapshot = await getDocs(meetingsQuery);
 
@@ -161,7 +161,7 @@ const [day, setDay] = useState('');
 
     meetingsSnapshot.forEach((doc) => {
       const meeting = doc.data();
-      const meetingDateParts = meeting.date.split("-");
+      const meetingDateParts = meeting.date.split("/");
       const meetingDay = parseInt(meetingDateParts[0]);
       const meetingMonth = parseInt(meetingDateParts[1]);
       const meetingYear = parseInt(meetingDateParts[2]);
@@ -226,7 +226,7 @@ useEffect(() => {
 }, [searchInput, savedGroups, allGroups]);
 
 useEffect(() => {
-  const pageSize = 10; // Adjust the page size as needed
+  const pageSize = 7; // Adjust the page size as needed
 
   const fetchInitialMeetings = async () => {
     try {

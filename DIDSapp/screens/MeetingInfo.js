@@ -88,7 +88,7 @@ const MeetingInfo = ({ route }) => {
     }
   };
 
-  const locationText = "Gosford Narara Community center 2 pandala Rd, Narara NSW 2250";
+  const locationText = address;
 
   const openGoogleMaps = () => {
     const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationText)}`;

@@ -373,7 +373,7 @@ const App = () => {
                 name="SignInRate"
                 component={SignInRate}
                 options={(props) => ({
-                  headerShown: true,
+                  headerShown: false,
                   header: () => <FrameComponent6 />,
                 })}
               />
@@ -381,7 +381,7 @@ const App = () => {
                 name="SignInQuestions"
                 component={SignInQuestions}
                 options={(props) => ({
-                  headerShown: true,
+                  headerShown: false,
                   header: () => <FrameComponent5 />,
                 })}
               />
