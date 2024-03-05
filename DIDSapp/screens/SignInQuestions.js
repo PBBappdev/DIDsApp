@@ -22,6 +22,7 @@ import { getFirestore, doc, getDoc, limit, startAfter, setDoc, deleteDoc, update
 const SignInQuestions = ({route}) => {
   const { location, day, date, time, state, address, description, meetingId, confidentiality} = route.params;
   const [attendeeType, setattendeeType] = useState("");
+  const [rate, setRating] = useState(0);
 
 
   const [frameRadioselectedIndex, setFrameRadioselectedIndex] = useState(undefined);
@@ -107,7 +108,7 @@ const SignInQuestions = ({route}) => {
   const database = getFirestore(firebaseApp);
     //check questions answered before continuing
   const checkAnswered = async () => {
-
+    
     await getUserData();
 
     if (frameRadio1selectedIndex !== undefined && frameRadioselectedIndex !== undefined && frameRadio2selectedIndex !== undefined) {
@@ -139,13 +140,13 @@ const SignInQuestions = ({route}) => {
           emailAddress: email,
           foundUs: "",
           createdAt: currentDate, // Add the createdAt field with the current timestamp
-         
+          rate: rate,
           
         });
-
+        
         const docID = docRef.id;
         console.log('Document written with ID: ', docID);
-  
+        
         navigation.navigate("SignInRate", {
           day: day,
           date: date,

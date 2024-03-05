@@ -34,6 +34,7 @@ import LanuageSelect from "./screens/LanuageSelect";
 import CreateProfile from "./screens/CreateProfile";
 import CreateAccount from "./screens/CreateAccount";
 import ResetPassword from "./screens/ResetPassword";
+import Approval from "./screens/Approval";
 import ForgotPassword from "./screens/ForgotPassword";
 import FrameComponent from "./components/MeetingHeader";
 import MeetingInfo from "./screens/MeetingInfo";
@@ -335,6 +336,11 @@ const App = () => {
               <Stack.Screen
                 name="LoadingScreen"
                 component={LoadingScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Approval"
+                component={Approval}
                 options={{ headerShown: false }}
               />
               <Stack.Screen

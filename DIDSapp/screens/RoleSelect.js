@@ -19,7 +19,11 @@ const RoleSelect = () => {
   
   const handleRadioPress = (role) => {
     setSelectedRole(role);
-    setRoleActive("Client");
+    if (role !== "GuestProfessional") {
+      setRoleActive("Client");
+    } else {
+      setRoleActive(role);
+    }
   };
 
 
@@ -133,8 +137,9 @@ const RoleSelect = () => {
 const styles = StyleSheet.create({
   roleSelectScrollViewContent: {
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "flex-start",
+    marginLeft: 28,
   },
   radioButtonsContainer: {
     width: "85%",

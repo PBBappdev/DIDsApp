@@ -189,7 +189,7 @@ const [day, setDay] = useState('');
 
      meetingsQuery = query(meetingsQuery, limit(pageSize)); // Apply pagination limit
 
-    const meetingsSnapshot = await getDocs(meetingsQuery);
+    const meetingsSnapshot = await getDocs(meetingRef);
     //console.log(meetingsSnapshot);
     const newMeetingsData = [];
     const allMeetingsData = [];

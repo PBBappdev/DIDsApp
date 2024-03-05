@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StatusBar,
   StyleSheet,
@@ -9,8 +9,53 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+import { firebaseApp, auth } from "../firebase";
+import { getAuth, initializeAuth, createUserWithEmailAndPassword, getReactNativePersistence} from "firebase/auth";
+import firestore from '@react-native-firebase/firestore';
+import { getFirestore, doc, getDoc, limit, startAfter, setDoc, deleteDoc, updateDoc, addDoc, collection, query, where, getDocs, orderBy, QueryStartAtConstraint } from "firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
+
 
 const InfoScreen = () => {
+  const navigation = useNavigation();
+  //get users selected role to show different options.
+  const [role, setActiveRole] = useState("");
+  const database = getFirestore(firebaseApp);
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        // Get the current user's ID from Firebase authentication
+        const userId = auth.currentUser.uid;
+
+        if (!userId) {
+          console.error("User not logged in");
+          return;
+        }
+        
+        // Get the Firestore instance and the reference to the user's document
+        
+        const userDocRef = doc(database, "Users", userId);
+
+        // Fetch the user's document from Firestore
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        // Check if the user has a document in Firestore
+        if (userDocSnapshot.exists()) {
+          // Get the SelectedRole field from the user's document
+          const setRole = userDocSnapshot.data().RoleActive;
+
+          // Set the isStaff state based on the user's role
+          setActiveRole(setRole);
+          console.log(setRole);
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
+    fetchUserRole();
+  }, []);
+
   return (
     <View style={styles.infoscreen}>
       <StatusBar barStyle="default" />
@@ -55,6 +100,16 @@ const InfoScreen = () => {
         >
           <Text style={styles.orangeText}>News</Text>
         </Pressable>
+
+        {role == "Staff" && (
+        <Pressable
+          style={[styles.redWrapper, styles.wrapperSpaceBlock]}
+          onPress={() => navigation.navigate("Approval")
+          }
+        >
+          <Text style={[styles.RedOutlineProps]}>Role Approval</Text>
+        </Pressable>
+        )}
       </View>
     </View>
   );

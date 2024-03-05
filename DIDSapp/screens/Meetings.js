@@ -27,6 +27,7 @@ import { getFirestore, doc, getDoc, limit, startAfter, setDoc, deleteDoc, update
 
 
 const Meetings1 = () => {
+  const navigation = useNavigation();
   StatusBar.setBackgroundColor("#FBB042");
   const [refreshing, setRefreshing] = useState(false);
 
@@ -41,7 +42,7 @@ const Meetings1 = () => {
   };
 
 
-  const navigation = useNavigation();
+  
 
   //day modal
   const [dayOpen, setDayOpen] = useState(false);
@@ -154,7 +155,7 @@ const [day, setDay] = useState('');
 
      meetingsQuery = query(meetingsQuery, limit(pageSize)); // Apply pagination limit
 
-    const meetingsSnapshot = await getDocs(meetingsQuery);
+    const meetingsSnapshot = await getDocs(meetingRef);//change to meetingsQuery later
 
     const newMeetingsData = [];
     const allMeetingsData = [];
